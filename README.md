@@ -10,4 +10,4 @@ It is named after those mythical sysops, staring at white on blue Borland compil
 
 # Installation
 
-You can use one of the provided fonts, or read build/INSTALL for instructions on building the font yourself from .bdf
+You can use the provided fonts, or read build/INSTALL for instructions on building the font yourself from .bdf
