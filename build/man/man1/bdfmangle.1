@@ -1,0 +1,236 @@
+.TH BDFMANGLE "1" "July 2013" "Uwe Waldmann" "User Commands"
+.SH NAME
+bdfmangle \- transform a bdf font file into another bdf font file
+.SH SYNOPSIS
+.B bdfmangle
+\fIBDFFILE\fR \fIMGLFILE\fR...
+.SH DESCRIPTION
+\fIBdfmangle\fR
+is a tool to select, rename, or reorder glyphs in
+a bdf font file.
+It reads a font file
+(or a concatenation of bdf font files
+via
+\fBcat\fR \fIBDFFILE1\fR \fIBDFFILE2\fR ... | \fBbdfmangle\fR - \fIMGLFILE ...\fR),
+manipulates the preamble and the glyphs of the
+font file as specified in \fIMGLFILEs\fR
+and prints the result to standard output.
+.SH "MGL COMMAND SYNOPSIS"
+When \fIbdfmangle\fR reads the font(s),
+it stores the first preamble that it encounters
+(discarding any further preambles)
+and the glyphs (bitmaps) of the font(s).
+Every glyph is stored independently under its name
+(the string following the \fISTARTCHAR\fR keyword)
+and under its encoding
+(the number following the \fIENCODING\fR keyword).
+Formally, a glyph
+.RS
+.PP
+STARTCHAR \fIglyphname\fR
+.br
+ENCODING \fInumber\fR
+.br
+\fIglyphdata\fR
+.br
+ENDCHAR
+.RE
+.PP
+is turned into
+.RS
+.PP
+names[\fIglyphname\fR] := \fIglyphdata\fR;
+.br
+numbers[\fInumber\fR] := \fIglyphdata\fR;
+.RE
+.PP
+If several glyphs have the same name or the same encoding,
+the last one overwrites the earlier ones.
+
+The preamble and glyphs are then processed according to
+the commands in the mgl file(s).
+Commands are separated by newlines.
+In contrast to bdf files,
+numbers in mgl files can be specified
+either decimally, or octally (with a \fI0\fR prefix)
+or hexadecimally (with a \fI0x\fR prefix).
+
+.SS
+Preamble commands
+.TP
+\fBFONT\fR \fIfontnamesuffix\fR
+Replaces the trailing part of the font name in the preamble
+by \fIfontnamesuffix\fR.
+The length of the the replaced part is determined by the
+number of hyphens in \fIfontnamesuffix\fR
+(the total number of hyphens is left unchanged).
+.TP
+\fBDEFAULT_CHAR\fR \fInumber\fR
+Replaces the \fIDEFAULT_CHAR\fR declaration in the preamble.
+.TP
+\fBCHARSET_REGISTRY\fR \fIstring\fR
+Replaces the \fICHARSET_REGISTRY\fR declaration in the preamble.
+.TP
+\fBCHARSET_ENCODING\fR \fIstring\fR
+Replaces the \fICHARSET_ENCODING\fR declaration in the preamble.
+.SS
+Output commands
+.TP
+\fBPUT\fR \fIglyphname\fR [\fInumber\fR]
+Prints the glyph stored at \fIglyphname\fR with its old name and
+the encoding \fInumber\fR.
+If no number is specified,
+the encoding of the last glyph printed is incremented by 1.
+.TP
+\fBPUTAS\fR \fIglyphname\fR \fInewglyphname\fR [\fInumber\fR]
+Prints the glyph stored at \fIglyphname\fR with the
+new name \fInewglyphname\fR and 
+the encoding \fInumber\fR.
+If no number is specified,
+the encoding of the last glyph printed is incremented by 1.
+.TP
+\fBPUTENC\fR \fIoldencoding\fR [\fInumber\fR] 
+Prints the glyph stored at \fIoldencoding\fR with its old name and
+the encoding \fInumber\fR.
+If no number is specified,
+the encoding of the last glyph printed is incremented by 1.
+.TP
+\fBPUTENCAS\fR \fIoldencoding\fR \fInewglyphname\fR [\fInumber\fR]
+Prints the glyph stored at \fIoldencoding\fR with the
+new name \fInewglyphname\fR and 
+the encoding \fInumber\fR.
+If no number is specified,
+the encoding of the last glyph printed is incremented by 1.
+.SS
+Copy commands
+.TP
+\fBCOPYTO\fR \fIglyphname\fR \fInewglyphname\fR
+Copies the glyph stored at \fIglyphname\fR
+to \fInewglyphname\fR,
+i.e.,
+
+names[\fInewglyphname\fR] := names[\fIglyphname\fR];
+
+The glyph is afterwards accessible both under its old
+and its new name.
+If some other glyph was previously stored at \fInewglyphname\fR,
+it is no longer accessible by its name
+(but it may still be accessible by its encoding).
+.TP
+\fBCOPYTOENC\fR \fIglyphname\fR \fInewnumber\fR
+Copies the glyph stored at \fIglyphname\fR
+to the encoding \fInewnumber\fR,
+i.e.,
+
+numbers[\fInewnumber\fR] := names[\fIglyphname\fR];
+
+The glyph is afterwards accessible both under its old name
+and its new encoding.
+If some other glyph was previously stored at the encoding \fInewnumber\fR,
+it is no longer accessible by its encoding
+(but it may still be accessible by its name).
+.TP
+\fBCOPYENCTO\fR \fInumber\fR \fInewglyphname\fR
+Copies the glyph stored at the encoding \fInumber\fR
+to \fInewglyphname\fR,
+i.e.,
+
+names[\fInewglyphname\fR] := numbers[\fInumber\fR];
+
+The glyph is afterwards accessible both under the encoding \fInumber\fR
+and its new name.
+If some other glyph was previously stored at \fInewglyphname\fR,
+it is no longer accessible by its name
+(but it may still be accessible by its encoding).
+.TP
+\fBCOPYENCTOENC\fR \fInumber\fR \fInewnumber\fR
+Copies the glyph stored at the encoding \fInumber\fR
+to the encoding \fInewnumber\fR,
+i.e.,
+
+numbers[\fInewnumber\fR] := numbers[\fInumber\fR];
+
+The glyph is afterwards accessible both under its old
+and its new encoding.
+If some other glyph was previously stored at the encoding \fInewnumber\fR,
+it is no longer accessible by its encoding
+(but it may still be accessible by its name).
+.SS
+Error handling commands
+.TP
+\fBNODEFAULT\fR
+Specifies that bdfmangle is aborted if unassigned glyph names
+or encodings are referenced.
+.TP
+\fBDEFAULT\fR \fIglyphname\fR
+Specifies that the glyph with the name \fIglyphname\fR
+is taken as a replacement
+whenever an unassigned glyph name
+or encoding is referenced.
+.TP
+\fBDEFAULTENC\fR \fInumber\fR
+Specifies that the glyph with the the
+encoding \fInumber\fR is taken as a replacement
+whenever an unassigned glyph name
+or encoding is referenced.
+.TP
+\fBDEFAULTOMIT\fR
+Specifies that print commands using unassigned glyph names
+or encodings are ignored.
+.SS
+Other commands
+.TP
+\fBINCLUDE\fR \fIfilename\fR
+Includes the mgl file \fIfilename\fR.
+.TP
+\fBIFDEF\fR \fIglyphname\fR \fIcmd\fR
+If there is a glyph stored at
+\fIglyphname\fR, executes the mgl command \fIcmd\fR;
+otherwise does nothing.
+.TP
+\fBIFUNDEF\fR \fIglyphname\fR \fIcmd\fR
+If there is no glyph stored at
+\fIglyphname\fR, executes the mgl command \fIcmd\fR;
+otherwise does nothing.
+.TP
+\fBIFDEFENC\fR \fInumber\fR \fIcmd\fR
+If there is a glyph stored at
+the encoding \fInumber\fR, executes the mgl command \fIcmd\fR;
+otherwise does nothing.
+.TP
+\fBIFUNDEFENC\fR \fInumber\fR \fIcmd\fR
+If there is no glyph stored at
+the encoding \fInumber\fR, executes the mgl command \fIcmd\fR;
+otherwise does nothing.
+.TP
+\fBIFFONT\fR \fIstring\fR \fIcmd\fR
+If the \fIFONT\fR declaration in the preamble contains
+\fIstring\fR as a substring, executes the mgl command \fIcmd\fR;
+otherwise does nothing.
+.TP
+\fBIFNOTFONT\fR \fIstring\fR \fIcmd\fR
+If the \fIFONT\fR declaration in the preamble does not contain
+\fIstring\fR as a substring, executes the mgl command \fIcmd\fR;
+otherwise does nothing.
+.TP
+\fBCOMMENT\fR \fIarbitrary-text\fR
+Adds the \fICOMMENT\fR to the output bdf file.
+.TP
+\fB#\fR \fIarbitrary-text\fR
+Does nothing. This is for comments that should \fInot\fR
+be copied to the output.
+.SH LIMITATIONS
+Glyph names may not contain whitespace.
+.PP
+There is a limit on the number of nested inclusion commands.
+.PP
+If the input of \fIbdfmangle\fR is a concatenation of bdf font files,
+the second and all further preambles are discarded, even if it
+contains copyright or licensing information that has to be kept
+intact.
+It may be necessary to restore such data manually.
+.SH COPYRIGHT
+Copyright \(co 2012-2015 Uwe Waldmann.
+.PP
+Bdfmangle may be freely used, copied, or modified
+under the terms of the MIT license.

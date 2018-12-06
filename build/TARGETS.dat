@@ -1,0 +1,83 @@
+# The Greybeard fonts come in nine sizes (from 11px to 22px) and
+# three styles (regular, bold, italic), and can be installed for
+# more than 30 character encodings ("code pages").
+#
+# Edit this file to specify which of the resulting size/style/encoding
+# combinations you want.
+#
+# For the purposes of dfont and ttf, Greybeard uses all sizes, but only
+# the "uni" target.
+#
+# **********************************************************************
+#
+# SIZES AND STYLES:
+#
+# The following combinations of font size and style are available:
+#
+#     Regular: 11  12  13  14  15  16  17  18  22
+#     Bold:    11b 12b 13b 14b 15b 16b 17b 18b 22b
+#     Italic:                  15i 16i 17i 18i
+#
+# The default is the entire list of size/style combinations.
+# If you want only a subset, delete those that you don't want in the
+# following line:
+
+SIZES = 11 12 13 14 15 16 17 18 22 11b 12b 13b 14b 15b 16b 17b 18b 22b 15i 16i 17i 18i
+
+# **********************************************************************
+#
+# CHARACTER ENCODINGS:
+#
+# The following character encodings are available:
+#
+#     Unicode / ISO 10646-1:                uni
+#     ISO 8859-1 (W Eur Latin):             i01
+#     ISO 8859-2 (E Eur Latin):             i02
+#     ISO 8859-3 (Maltese, Esperanto):      i03
+#     ISO 8859-5 (E Eur Cyrillic):          i05
+#     ISO 8859-7 (Greek):                   i07
+#     ISO 8859-8 (Hebrew):                  i08
+#     ISO 8859-9 (Turkish):                 i09
+#     ISO 8859-10 (Sami, Inuit):            i10
+#     ISO 8859-13 (Baltic):                 i13
+#     ISO 8859-14 (Celtic):                 i14
+#     ISO 8859-15 (W Eur Latin + Euro):     i15
+#     ISO 8859-16 (SE Eur Latin):           i16
+#     MS Windows CP1250 (E Eur Latin):      m50
+#     MS Windows CP1251 (E Eur Cyrillic):   m51
+#     MS Windows CP1253 (Greek):            m53
+#     MS Windows CP1255 (Hebrew):           m55
+#     MS Windows CP1257 (Baltic):           m57
+#     KOI8-R (Russian):                     k8r
+#     KOI8-U (Ukrainian):                   k8u
+#     KOI8-T (Tajik):                       k8t
+#     ArmSCII-8 (Armenian):                 am8
+#     "PS" Encoding (Georgian):             gep
+#     "Academy" Encoding (Georgian):        gea
+#     KZ-1048 (Kazakh):                     kaz
+#     Paratype PT154 (Asian Cyrillic):      154
+#     TIS 620-0 (Thai):                     ti0
+#     TCVN-5712 (Vietnamese):               tcv
+#     VISCII-1.1 (Vietnamese):              vis
+#     BPI-102 (Bambara, Ewondo, Fula):      102
+#     BPI-104 (Lingala, Sango, Wolof):      104
+#     CSX+ (Transliterated Sanskrit):       csp
+#     Original IBM PC Encoding:             437
+#     DOS Multilingual Encoding:            850
+#     Adobe Symbol Font Encoding:           sym
+#
+# The ISO 8859-1 and ISO 8859-9 fonts contain also the additional
+# characters of MS Windows CP1252 and MS Windows CP1254 and can be
+# used for these codepages as well.
+#
+# The default is Unicode, ISO 8859-{1,2,7,9,15}, and MS Windows CP 1251.
+# If you want others, change the following line accordingly:
+
+ENCODINGS = uni
+#ENCODINGS = uni i01 i02 i07 i09 i15 m51
+
+# (You will probably need only a small number of encodings. As a rule
+# of thumb, if you have never heard of some encoding, you will probably
+# not need it.)
+
+# **********************************************************************

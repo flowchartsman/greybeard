@@ -1,0 +1,152 @@
+# The Greybeard fonts offer stylistic glyph variants for many characters.
+# 
+# Edit this file to specify your preferred glyph variants.
+#
+# *********************************************************************
+
+# +--------------------------------------------------------------------
+# | 0027 APOSTROPHE
+# | 0060 GRAVE ACCENT
+# +--------------------------------------------------------------------
+# | The default glyphs for UW tty0 are slightly slanted and curly, but
+# | Greybeard opts to make them straight. Comment out either of the
+# | following two lines to return them to their former curly state.
+COPYTO AccStress PApostropheAscii
+COPYTO PAmComma AccGraveAscii
+
+# +--------------------------------------------------------------------
+# | 0030 DIGIT ZERO
+# +--------------------------------------------------------------------
+# | UW tty0's default 0 is distinguished from the letter "O" only by
+# | being wider and more rectangular. Greybeard opts to choose the
+# | slashed variant. To restore the original zero, comment both lines
+# | below. To use the dotted variant, comment the Digit0Slashed line
+# | and uncomment the Digit0Dotted line
+#COPYTO Digit0Dotted Digit0
+COPYTO Digit0Slashed Digit0
+
+# +--------------------------------------------------------------------
+# | 002A ASTERISK
+# +--------------------------------------------------------------------
+# | The default glyph for the asterisk is centered (like a mathematical
+# | operator). If you prefer a raised asterisk (like a footnote mark),
+# | delete the "#" in the following line:
+#COPYTO SupAsterisk SAsterisk
+
+# +--------------------------------------------------------------------
+# | 003C LESS-THAN SIGN
+# | 003E GREATER-THAN SIGN
+# +--------------------------------------------------------------------
+# | The default glyphs are right-angled. If you prefer acute-angled
+# | ones, delete the "#" in the following two lines:
+#COPYTO MLessAlt1 MLess
+#COPYTO MGreaterAlt1 MGreater
+
+# +--------------------------------------------------------------------
+# | 007E TILDE
+# +--------------------------------------------------------------------
+# | UW tty0 opted for a raised tilde by default, but Greybeard chooses
+# | to center it, along with the asterisk. Comment the following line
+# | to restore the raised tilde:
+COPYTO MTilde AccTildeAscii
+
+# +--------------------------------------------------------------------
+# | 00A0 NO-BREAK SPACE
+# +--------------------------------------------------------------------
+# | UW tty0 uses an open rectangle for the no-break space by default.
+# | This causes all sorts of problems in a modern setting, where some
+# | editors (like VSCode) pad the left with nbsp. For Greybeard, we
+# | have chosen to render it as a normal space. To restore the old
+# | behavior, comment the following lines. The other alternate is also
+# | available, which is a somewhat nondescript pair of tiny boxes at
+# | the baseline.
+COPYTO Space SpaceNoBreak
+#COPYTO DVisibleSpace SpaceNoBreak
+
+# +--------------------------------------------------------------------
+# | 00AD SOFT HYPHEN
+# +--------------------------------------------------------------------
+# | The default glyph for the soft hyphen looks like a short hyphen.
+# | (This is non-standard, but it reduces the risk of programming
+# | mistakes.) If you prefer a soft hyphen that looks like a minus
+# | sign, delete the "#" in the following line:
+#COPYTO PHyphenMinus PHyphenSoft
+
+# +--------------------------------------------------------------------
+# | 0192 LATIN SMALL LETTER F WITH HOOK
+# +--------------------------------------------------------------------
+# | In the upright fonts, the default glyph is an upright lower-case f
+# | with hook. This makes the fonts usable for African languages in
+# | which an f with hook occurs as a regular letter. If you prefer an
+# | italic f with hook (Florin sign), delete the "#" in the following
+# | line:
+#COPYTO CurrFlorin LtSmlFLhook
+
+# +--------------------------------------------------------------------
+# | 014A LATIN CAPITAL LETTER ENG
+# +--------------------------------------------------------------------
+# | The letter Eng occurs both in African languages and in Sami,
+# | but the preferred glyphs for the capital letter differ.
+# | The default glyph is an enlarged lower-case n with hook (i.e.,
+# | the African variant). If you prefer an upper-case N with hook
+# | (the Sami variant), delete the "#" in the following line:
+#COPYTO LtCapEngSami LtCapEng
+
+# +--------------------------------------------------------------------
+# | 041B CYRILLIC CAPITAL LETTER EL
+# | 0432 CYRILLIC SMALL LETTER VE
+# | 0433 CYRILLIC SMALL LETTER GHE
+# | 0434 CYRILLIC SMALL LETTER DE
+# | 0436 CYRILLIC SMALL LETTER ZHE
+# | 0437 CYRILLIC SMALL LETTER ZE
+# | 0438 CYRILLIC SMALL LETTER I
+# | 0439 CYRILLIC SMALL LETTER SHORT I
+# | 043A CYRILLIC SMALL LETTER KA
+# | 043B CYRILLIC SMALL LETTER EL
+# | 043F CYRILLIC SMALL LETTER PE
+# | 0442 CYRILLIC SMALL LETTER TE
+# | 0446 CYRILLIC SMALL LETTER TSE
+# | 0448 CYRILLIC SMALL LETTER SHA
+# | 0449 CYRILLIC SMALL LETTER SHCHA
+# | 044E CYRILLIC SMALL LETTER YU
+# | 045D CYRILLIC SMALL LETTER I WITH GRAVE
+# +--------------------------------------------------------------------
+# | The default Cyrillic glyphs are the Eastern Cyrillic ones. If you
+# | prefer the Bulgarian ones (italic-like forms for ghe, de, i, pe,
+# | te, tse, sha, shcha; ascenders/descenders for ve, zhe, ze, ka, yu;
+# | triangular el), delete the "#" in the following 17 lines:
+#COPYTO CyCapElBul CyCapEl
+#COPYTO CySmlVeBul CySmlVe
+#COPYTO CySmlGheBul CySmlGhe
+#COPYTO CySmlDeBul CySmlDe
+#COPYTO CySmlZheBul CySmlZhe
+#COPYTO CySmlZeBul CySmlZe
+#COPYTO CySmlIBul CySmlI
+#COPYTO CySmlIBreveBul CySmlIBreve
+#COPYTO CySmlKaBul CySmlKa
+#COPYTO CySmlElBul CySmlEl
+#COPYTO CySmlPeBul CySmlPe
+#COPYTO CySmlTeBul CySmlTe
+#COPYTO CySmlTseBul CySmlTse
+#COPYTO CySmlShaBul CySmlSha
+#COPYTO CySmlShchaBul CySmlShcha
+#COPYTO CySmlYuBul CySmlYu
+#COPYTO CySmlIGraveBul CySmlIGrave
+
+# +--------------------------------------------------------------------
+# | 0431 CYRILLIC SMALL LETTER BE
+# | 0433 CYRILLIC SMALL LETTER GHE
+# | 0434 CYRILLIC SMALL LETTER DE
+# | 043F CYRILLIC SMALL LETTER PE
+# | 0442 CYRILLIC SMALL LETTER TE
+# | 0453 CYRILLIC SMALL LETTER GJE
+# +--------------------------------------------------------------------
+# | In the italic fonts, the default glyphs are the Eastern Cyrillic
+# | ones. If you prefer the Serbian/Macedonian variants, delete the "#"
+# | in the following six lines:
+#COPYTO CySmlBeSrb CySmlBe
+#COPYTO CySmlGheSrb CySmlGhe
+#COPYTO CySmlDeSrb CySmlDe
+#COPYTO CySmlPeSrb CySmlPe
+#COPYTO CySmlTeSrb CySmlTe
+#COPYTO CySmlGheAcuteMcd CySmlGheAcute

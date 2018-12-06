@@ -1,0 +1,70 @@
+#!/usr/bin/perl
+
+# Copyright (C) 2012-2015 Uwe Waldmann
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+# IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+# CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+# TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+# SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+while (<>) {
+
+  s/^(FONT\s+-[^-]*-[^-]*-[^-]*-[^-]*-[^-]*-[^-]*-)(\d+)-(\d+)(-[^-]*-[^-]*-[^-]*-[^-]*-[^-]*-[^-]*)/"$1" . ($2-1) . "-" . ($3-10) . "$4"/e;
+  s/^(SIZE\s+)(\d+)(\s+\d+\s+\d+)/"$1" . ($2-1) . "$3"/e;
+  s/^(FONTBOUNDINGBOX\s+\d+\s+)(\d+)(\s+\d+\s+-)(\d+)/"$1" . ($2-1) . "$3" . ($4-1)/e;
+  if (s/^(PIXEL_SIZE\s+)(\d+)/"$1" . ($2-1)/e) {
+    $midline = int($2 / 2);
+    if ($2 == 16) {
+      # distinction is relevant only for italics
+      $am_elim_row = 3;
+    } else {
+      $am_elim_row = 2;
+    }
+  }
+  s/^(POINT_SIZE\s+)(\d+)/"$1" . ($2-10)/e;
+  s/^(FONT_DESCENT\s+)(\d+)/"$1" . ($2-1)/e;
+  s/^(BBX\s+)(\d+)(\s+)(\d+)(\s+\d+\s+-)(\d+)/"$1$2$3" . ($4-1) . "$5" . ($6-1)/e;
+  s/\t/ /g;
+  if (/^STARTCHAR/../^ENDCHAR/) {
+    if (/^STARTCHAR/) {
+      $c = $_;
+    } else {
+      $c .= $_;
+    }
+    if (/^ENDCHAR/) {
+      $_ = $c;
+      s/\n/\t/g;
+      s/\t$/\n/;
+      if (/^STARTCHAR (Comb[A-Z]|ThSaraUu?\b|ThPhinthu)/
+	  && ! /\t0+\tENDCHAR/
+	  && /BITMAP[0\t]+(\t\w+){1,5}\tENDCHAR$/) {
+	s/BITMAP\t0+/BITMAP/;
+      } elsif (/^STARTCHAR AmSml[A-Z]/) {
+	s/\t\w+((\t\w+){$am_elim_row})\tENDCHAR$/$1\tENDCHAR/o;
+      } elsif (/^STARTCHAR (GDiagCross|GPlSep[A-Z])/) {
+	s/\t\w+((\t\w+){$midline})\tENDCHAR$/$1\tENDCHAR/o;
+      } else {
+	s/\t\w+\tENDCHAR/\tENDCHAR/;
+      }
+      s/\t/\n/g;
+      print $_;
+    }
+  } else {
+    print $_;
+  }
+}
+

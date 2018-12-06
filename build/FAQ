@@ -1,0 +1,386 @@
+
+                            Greybeard Fonts
+                       Frequenly Asked Questions
+
+FONT FORMATS AND INSTALLATION
+
+* When I try to use Greybeard, everything looks like gibberish: there are
+  lots of characters that I don't even recognize. What's going wrong?
+
+  You have tried to use the source bdf files in the distribution
+  directly, rather than following the steps described in INSTALL. That
+  does not work, sorry. The source bdf files use a proprietary encoding
+  and have to be converted into a standard format during the
+  installation process.
+
+
+* Why do you use some weird encoding and glyph names that are not the
+  standard Postscript names.
+
+  Neither the Unicode order of glyphs nor the standard Postscript names
+  are particularly well-suited for font design. As a designer one would
+  like to have something more systematic, for instance all glyphs that
+  share some element should have related names and should come one after
+  another in the font file. Greybeard uses the bdfmangle utility to
+  convert the source bdf files into Unicode (or any other) encoding. If
+  you have an application that really cares about Postscript names (most
+  programs using pcf fonts don't care), you can use fontforge to change
+  the names.
+
+
+* The source of Greybeard is in bdf format, which is then compiled in two
+  steps into pcf format. Are precompiled versions of the fonts
+  available?
+
+  Not from me. Greybeard has a large number of configuration options, but
+  that is possible only if the final pcf files are compiled from the
+  source. With precompiled versions, this flexibility would be lost.
+
+
+* Are there ports for $LINUX_DISTRIBUTION?
+
+  As far as I know, there are packages for SourceMage and Arch Linux.
+  If you are familiar with packaging and if you'd like to prepare such
+  a port for another distribution, drop me a note.
+
+
+* What should I use to edit VARIANTS.dat and TARGETS.dat?
+
+  Both files can be edited using any text editor, for example emacs,
+  vim, gedit, kate, nano, or notepad. Do not use a word processor,
+  such as LibreOffice Writer or Microsoft Word.
+
+
+* I edited VARIANTS.dat and TARGETS.dat, but now I get syntax error
+  messages when I run make.
+
+  The directory "backup-config" contains backup copies for VARIANTS.dat
+  and TARGETS.dat. Copy them to the main directory and try again.
+
+
+* I need the compiled bdf fonts of Greybeard, rather than the pcf fonts.
+  How do I get them?
+
+  Type "make bdf" instead of "make". The compiled bdf fonts are stored
+  in "genbdf".
+
+
+* I don't have "make". What can I do?
+
+  That means that you are not using anything Unix-like, right? For
+  MS Windows, you might use Cygwin. Alternatively, try this:
+
+    perl bin\bdfmangle bdf\t0-12.bdf VARIANTS.dat mgl\unicode.mgl > genbdf\t0-12-uni.bdf
+    perl bin\bdfmangle bdf\t0-12b.bdf VARIANTS.dat mgl\unicode.mgl > genbdf\t0-12b-uni.bdf
+    perl bin\bdfmangle bdf\t0-14.bdf VARIANTS.dat mgl\unicode.mgl > genbdf\t0-14-uni.bdf
+    perl bin\bdfmangle bdf\t0-14b.bdf VARIANTS.dat mgl\unicode.mgl > genbdf\t0-14b-uni.bdf
+    ...
+    perl bin\bdfmangle bdf\t0-22.bdf VARIANTS.dat mgl\unicode.mgl > genbdf\t0-22-uni.bdf
+    perl bin\bdfmangle bdf\t0-22b.bdf VARIANTS.dat mgl\unicode.mgl > genbdf\t0-22b-uni.bdf
+
+  This should at least give you the Unicode bdf versions of the
+  even-sized fonts. For the odd-sized ones, it's unfortunately more
+  complicated, you need something like
+
+    perl bin\mkshallow bdf\t0-12.bdf > za
+    copy /b za + bdf\t0-11.bdf zb
+    perl bin\bdfmangle zb VARIANTS.dat mgl\unicode.mgl > genbdf\t0-11-uni.bdf
+
+  and analogously for the other sizes and styles. (Disclaimer: This is
+  untested. I don't use MS Windows.)
+
+
+* What about other font formats?
+
+  Let's face it, bdf as a format is not long for the world. Greybeard
+  strives to be usable in a modern context, so attention has been paid
+  to rendering it in a modern context. Currently, it renders to .dfont,
+  and has been tested with success in OSX High Sierra. ttf should be
+  following shortly, though we will need some help with testing.
+
+------------------------------------------------------------------------
+
+FONT STYLES AND SIZES
+
+* What is special about the odd-sized versions of Greybeard?
+
+  The odd sizes (6x11, 7x13, 8x15, 9x17) are generated mostly
+  automatically from the corresponding even ones (6x12, 7x14, 8x16,
+  9x18) using the mkshallow script. The source bdf files for these
+  fonts, say bdf/t0-13.bdf, contain only those glyphs for which the
+  automatic conversion from bdf/t0-14.bdf might fail. Note that this
+  height reduction does not work well for certain scripts, in
+  particular Georgian, Armenian, Thai, and pointed Hebrew. Use the
+  even-sized versions instead.
+
+
+* Will any more font sizes be added to Greybeard?
+
+  That's very unlikely. A 6x11 matrix is already too small for something
+  like Thai, anything below that would be ridiculous. One could create a
+  10x20 font, but it's a rather inconvenient size: too large for a font
+  with stroke width 1 and too small for stroke width 2. Above 11x22, it's
+  recommend to use outline fonts. (The larger sizes have the advantage
+  that hinting in an outline font becomes less important; on the other
+  hand designing a bitmap font becomes more and more tedious).
+
+
+* What about the missing italics?
+
+  In a bitmap font, italics work only (in as aesthetically acceptable
+  way) if certain relationships between the character height, the
+  character width, the stroke width and the inter-character space are
+  satisfied. For 8x16 it works, for 9x18 it works at a pinch, for 6x12,
+  7x14 and 11x12 it doesn't. Bold italics are even worse. Sorry.
+
+
+* Will you make a scalable version of Greybeard?
+
+  No.
+
+
+* Can I get a font in which some characters are bold or italic, and
+  the others are not?
+
+  Yes. Here is an example. Let's say you want to replace parentheses
+  and square and curly brackets in the 8x16 font by their bold versions.
+
+  (1) First generate the Unicode bdf files for the regular and the bold
+  8x16 font using "make bdf". The files are named "genbdf/t0-16-uni.bdf"
+  and "genbdf/t0-16b-uni.bdf".
+
+  (2) You need a file that contains the bdfmangle commands for those
+  characters that you want to replace. Use a text editor to create
+  a file "replace.mgl" with the following content:
+
+    PUT PParenL
+    PUT PParenR
+    PUT PSquareBrackL
+    PUT PSquareBrackR
+    PUT PCurlyBrackL
+    PUT PCurlyBrackR
+
+  The names of the characters can be found in "CHARSET". Depending
+  on which characters you want to replace, you can also grep the
+  appropriate lines from mgl/unicode.mgl; for instance
+
+    $ grep 'PUT Gk' mgl/unicode.mgl > replace.mgl
+
+  yields a replacement file for all Greek letters.
+
+  (3) Use bdfmangle to generate a file that contains only the parentheses
+  and brackets from the bold font:
+
+    $ perl bin/bdfmangle genbdf/t0-16b-uni.bdf replace.mgl > tmp-16.bdf
+
+  (4) Concatenate genbdf/t0-16-uni.bdf and tmp-16.bdf (the order is
+  important!), filter the result once more through bdfmangle to produce
+  a Unicode bdf file, and replace the old Unicode bdf file for the 8x16
+  font by the new one.
+
+    $ cat genbdf/t0-16-uni.bdf tmp-16.bdf | perl bin/bdfmangle - mgl/unicode.mgl > new-16.bdf
+    $ mv new-16.bdf genbdf/t0-16-uni.bdf
+
+  (5) If necessary, repeat steps (3) and (4) for other font sizes.
+
+  (6) Run "make" to generate and install the remaining files:
+
+    $ make
+    # make install
+
+  Note that you can only merge fonts with the same dimensions. Combining
+  characters from, say, the 8x16 and the 9x18 font will not work.
+
+------------------------------------------------------------------------
+
+DESIGN ISSUES
+
+* Some characters that involve accents, tone marks, or Thai or Hebrew
+  vowel signs are not displayed correctly.
+
+  Greybeard is a bdf font and the bdf format does not provide means
+  for proper positioning of floating accents. Consequently, all
+  combinations of letters and diacritical marks for which no precomposed
+  glyphs are available must be implemented by naive overprinting. The
+  results are obviously not optimal.
+
+
+* Why is there a curly apostrophe (and a curly grave accent)? It
+  violates the Unicode standard.
+
+  No, it doesn't. Unicode is a character set standard, not a glyph
+  standard. Whatever it says about glyphs is, quite explicitly, not
+  normative. A font that represents the entire Latin alphabet using
+  German blackletter does not violate the Unicode standard. A font that
+  represents all lowercase letters by uppercase glyphs and uses the same
+  glyph for U and V (following ancient tradition: SENATVS POPVLVSQVE
+  ROMANVS) does not violate the Unicode standard. A font in which U+0027
+  and U+0060 are represented by slanted and curly glyphs does not
+  violate the Unicode standard either. It's not a bug; it's a conscious
+  design decision.
+
+  In fact, what Unicode really says about apostrophe glyphs is the
+  following (Unicode 6.1.0, Ch. 6, Section "Apostrophes"):
+
+  |  When text is set, U+2019 right single quotation mark is preferred
+  |  as apostrophe, but only U+0027 is present on keyboards. Word
+  |  processors commonly offer a facility for automatically converting
+  |  the U+0027 apostrophe to a contextually selected curly quotation
+  |  glyph. In these systems, a U+0027 in the data stream is always
+  |  represented as a straight vertical line and can never represent a
+  |  curly apostrophe or a right quotation mark.
+
+  Note that, for typical applications of Greybeard, the assumption above
+  does not hold: No sane person uses a monospaced low-resolution bitmap
+  font like Greybeard for wisiwyg typesetting in a word processor.
+  Anyhow, for somebody who uses proper Unicode quotes (U+2018, U+2019)
+  in a natural language text, the appearance of U+0027 doesn't matter,
+  as long as it can be distinguished from U+2018 and U+2019. (In UW
+  ttyp0, U+0027 and U+0060 are curly and slanted, whereas U+2018 and
+  U+2019 are curly and unslanted.)
+  
+  On the other hand, the appearance of U+0027 does matter for people who
+  type or read natural language text and who have to deal with data in
+  some 8-bit character set. And for them, a directed curly glyph for
+  U+0027 looks right in some contexts (if used as an apostrophe or as a
+  closing quotation mark), and wrong in some other contexts (if used as
+  an opening quotation mark), but an anorexic vertical stroke looks
+  wrong all the time.
+
+  Some people claim that a neutral, vertical glyph is more appropriate
+  for programming. It seems that that the inventors and developers of
+  Ada 95, C, C++, Common Lisp, Eiffel, GNU Emacs, Java, Perl, Smalltalk,
+  the Bourne shell, and TeX did not share this opinion. At least, none
+  of them used a neutral glyph in their language descriptions (Taft and
+  Duff 1997, Kernighan and Ritchie 1988, Stroustrup 1991/1997, Steele
+  1990, Meyer 1992, Stallman 1997, Arnold and Gosling 1997, Wall et al.
+  1991/1996, Goldberg and Robson 1989, Bourne 1983, Knuth 1986). So,
+  it's at most a matter of taste. If you don't like the default, get the
+  source, edit VARIANTS.dat, and type "make".
+
+
+* Could you raise the asterisk or tilde/dot the zero/reduce the angle
+  of the less and greater signs?
+
+  These glyphs are already present in Greybeard. Get the source, edit
+  VARIANTS.dat, and type "make".
+
+
+* Could you make these variants the default ones?
+
+  No. But the build process may be modified to build all variants
+  in the near future.
+
+* Why are some characters in the italic fonts not italic?
+
+  Using italics is uncommon for Hebrew typesetting, so italics are
+  replaced by semi-bold. Mathematical operators are never italicized in
+  mathematical texts, so these characters are just copied from the
+  upright fonts; the same applies to dingbats and line graphics.
+
+------------------------------------------------------------------------
+
+CHARACTER ENCODINGS
+
+* I have generated a font for some (not so common) encoding, but some
+  characters are not displayed correctly/not displayed at all. What's
+  going wrong?
+
+  Most likely, there is some discrepancy between what you see and what
+  the operating system assumes. The assumptions of the OS and the
+  application about your character encoding are described by a so-called
+  "locale". The locale defines, among others, which character codes
+  represent letters, which ones represent other printable characters,
+  and which ones represent non-printable control characters. Changing a
+  font does not automatically change the locale. So, if you use a MS
+  Windows CP1251 font, then the code 0x8A corresponds to the Serbian
+  letter Lje, but if your locale still says that you use ISO 8859-1,
+  then the OS and your applications still assume that 0x8A is a
+  non-printable control character. You will have to figure out how to
+  change locales (and for more exotic encodings even how to write
+  locales).
+
+------------------------------------------------------------------------
+
+POWERLINE
+
+* Can I use Greybeard with the old (not python-based) version of
+  vim-powerline?
+
+  Yes, but you have to insert the following lines into mgl/unicode.mgl
+  before running "make":
+
+    PUT DVerCtlBranch 0x2B60
+    PUT CtlLN 0x2B61
+    PUT LtCapF 0x2B62
+    PUT LtCapT 0x2B63
+    PUT DPadlockCl 0x2B64
+    PUT GPlSepArrowRB 0x2B80
+    PUT GPlSepArrowR 0x2B81
+    PUT GPlSepArrowLB 0x2B82
+    PUT GPlSepArrowL 0x2B83
+
+
+* Some dingbats used by tmux-powerline are missing.
+
+  Most dingbats do not fit well into a 6x12 bitmap, and many dingbats
+  do not fit well into any monospaced font, so the dingbat repertoire
+  of Greybeard is somewhat limited, but we will accept PRs for suitable
+  alternatives.
+
+  Please have a look at "CHARSET" to see what's available and edit the
+  tmux-powerline code to use some alternative glyphs.
+
+------------------------------------------------------------------------
+
+WILL YOU ...?
+
+* Will you fix bugs in Greybeard?
+
+  Sure! But ideally you'd fix those yourself. :) Submit a PR
+
+* Will you add more characters to Greybeard?
+
+  Submit an issue. Make a case. Maybe. But probably no new scripts
+  unless you want to submit a PR for it yourself. There's not enough
+  time in the day to maintain a font in an already-dying format.
+
+* Will you copy the missing characters from $OTHER_FREE_FONT into
+  Greybeard?
+
+  Maybe. If there's a clear need for it. And if the license is
+  compatible.
+
+------------------------------------------------------------------------
+
+LICENSE
+
+* Why is this under the MIT license now? Wasn't UW ttyp0 under its
+  own license?
+
+  Yes, but that license was simply the MIT license with the additional
+  stipulation that the font be dissasociated from its author so that
+  he wouldn't have to support any variations that were not his own.
+  Specifically, the requirement was that any derived font
+
+  1) not include 'UW' as the foundry and
+  2) change the foundry if keeping the name "ttyp0"
+
+  Greybeard has kept neither the foundry nor the name, and I have
+  scrubbed all mentions of Uwe's email from the files, fulfilling
+  that obligation and then some. Further, I have no concerns that
+  people will bombard me with support questions or emails, since
+  this is now a hosted open source project. Thus, it stands to
+  reason that Greybeard is now simply an MIT-Licensed font.
+
+  Having said all this, my primary intention in modifying this
+  font and re-releasing it is to make Uwe's fine work available
+  as a crisp programming font to a modern audience, not to claim
+  undue credit, and certainly not to misrepresent the intentions
+  and opinions of the author or to circumbevent copyright law.
+  Thus, if there are any issues with the modified license, font
+  content, or any of the prose contained in any of the files in this
+  distribution, please submit an issue, and I will be sure to
+  give it full consideration and to address any concern as best I
+  can.
+

@@ -1,0 +1,151 @@
+Installing the Greybeard fonts
+
+Please note: these instructions are adapted from the original instructions
+included with UW tty0 (and by "adapted" I mean that I basically used a
+regex to swap the names around), They may no longer be relevant or they
+may be flat-out wrong. I intend to revisit them in the near future.
+
+Ideally, for most modern uses, you should be using one of the provided
+modern formats (dfont, ttf)
+
+REQUIREMENTS:
+
+To install Greybeard, you need:
+
+- the standard Unix utilities (sh, cat, rm, install)
+- GNU make (this is the default "make" program under Linux, but other
+  operating systems may differ)
+- perl
+- bdftopcf
+
+
+
+INSTALLATION:
+
+Step 1: Choose stylistic variants.
+
+  The Greybeard fonts offer stylistic variants for many characters.
+  You can, for instance, choose whether you want a regular, a dotted
+  or a slashed zero, a raised or a centered tilde, russian, serbian,
+  or bulgarian cyrillic characters, and so on.
+
+  Edit the file "VARIANTS.dat" to select your preferred stylistic
+  variants. (If you don't, you have to live with the default
+  stylistic variants.)
+
+Step 2: Choose sizes and encodings.
+
+  The Greybeard fonts come in nine sizes (from 11px to 22px) and
+  three styles (regular, bold, italic), and can be installed for
+  more than 30 character encodings ("code pages").
+
+  The default behaviour is to install all sizes, all styles, and
+  seven encodings, namely Unicode, ISO 8859-{1,2,7,9,15}, and
+  MS Windows CP 1251. If you want more or less combinations,
+  edit the file "TARGETS.dat".
+
+Step 3: Compile and install fonts
+
+  The sequence of commands
+
+    $ ./configure [--prefix=PREFIX] [--pcfdir=PCFDIR]
+    $ make
+    # make install
+
+  compiles and installs Greybeard for X11 (using the pcf.gz format).
+
+  The "--prefix" option is used to specify in which directory tree the
+  fonts should be installed; the default PREFIX is /usr/local. If you
+  want a private installation in your home directory, rather than a
+  global one, use "--pcfdir=$HOME/.fonts" instead. For a full list
+  of options, type "./configure --help".
+
+  (Unless you install the fonts in your home directory, "make install"
+  must be executed as root.)
+
+Step 4: Troubleshooting
+
+  In an ideal world, everything should work now and this part of the
+  installation guide should be empty. Unfortunately, the X11 font system
+  is far away from being an ideal world. There are several sources of
+  problems. First of all, there is not only one X11 font system, but
+  there are two of them: an older, server-based and a newer,
+  client-based one. Depending on how the font is installed, it may be
+  accessible only to applications that use one of the two font systems;
+  so for instance, it may work in an xterm, but not in a KDE konsole.
+  Second, in some distributions, bitmap fonts are explicitly disabled in
+  order to ensure that the old bitmap versions of fonts like Times or
+  Helvetica don't show up in your web browser. You may have to override
+  this in order to use Greybeard. Third, it seems that each OS
+  distribution and each desktop system offers a standard way to
+  configure such things, but of course each one has a different
+  standard. There isn't much help at this point -- in most cases, it's a
+  good idea to search for "bitmap fonts", "install", and the name of
+  your OS distribution, desktop system, or application in your favorite
+  search engine.
+
+  Common problems:
+
+  For the older, server-based font system, the fonts either need to be
+  installed in a directory of the current font path, or the font path
+  has to be extended. The current value of your font path can be
+  obtained using "xset q". To extend the font path, the command
+  "xset +fp NEW_FONT_DIRECTORY" must be executed after each login (or,
+  more precisely, after each restart of the X server).
+
+  The main problem of the newer, client-based font system is that bitmap
+  fonts like Greybeard are often explicitly disabled. If there is a file
+  /etc/fonts/conf.d/70-no-bitmaps.conf on your system, then they
+  probably are disabled. In this case, you can enable Greybeard globally
+  by copying the following lines into a file
+  /etc/fonts/conf.d/50-enable-greybeard.conf
+
+    <?xml version="1.0"?>
+    <!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+    <fontconfig>
+      <selectfont>
+        <!-- enable Greybeard -->
+        <acceptfont>
+          <pattern>
+            <patelt name="family"><string>Greybeard</string></patelt>
+          </pattern>
+        </acceptfont>
+      </selectfont>
+    </fontconfig>
+
+  If you want to (or have to) enable Greybeard just for yourself, check
+  first whether there is already a file ".fonts.conf" in your home
+  directory. If there is no such file, or if it is empty, copy the lines
+  above into ".fonts.conf". If your ".fonts.conf" is non-empty, take
+  just the lines from <selectfont> to </selectfont> and insert them
+  in ".fonts.conf" after the leading <fontconfig>.
+
+  In both the old and the new font system, you may have to rebuild font
+  information cache files after installing Greybeard. The commands are
+  "xset fp rehash" and "fc-cache -f".
+
+
+
+OTHER INSTALLATION OPTIONS
+
+make bdf
+  Produces the generated bdf files for the chosen sizes, styles, and
+  encodings, rather than the compressed pcf files.
+
+make install-util
+  Installs the "bdfmangle" utility and its manual page in $prefix/bin
+  and $prefix/man. Alternative directories can be specified using the
+  configure options "--bindir=..." and "--mandir=...". (Installation of
+  "bdfmangle" is not necessary to install the Greybeard fonts.)
+
+make clean
+  Removes all files generated by "make". (Files generated by "make
+  install" are not affected.)
+
+make distclean
+  Restores the original content of TARGETS.dat and VARIANTS.dat and
+  removes all files generated by "./configure" or "make". (Files
+  generated by "make install" are not affected.)
+
+The Greybeard Makefile supports the $(DESTDIR) convention.
+

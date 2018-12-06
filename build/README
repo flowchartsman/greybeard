@@ -1,0 +1,46 @@
+INTRODUCTION
+
+This archive contains the source code and auxiliary programs for
+installing the Greybeard fonts for X11.
+
+Greybeard is a family of monospaced bitmap fonts in bdf format. It covers
+most of the Latin and Cyrillic alphabet, Greek, Armenian, Georgian (only
+Mkhedruli), Hebrew (without cantillation marks), Thai, most of IPA (but
+no UPA), standard punctuation, common symbols, some mathematics, line
+graphics and a few dingbats (about 3000 Unicode characters).
+
+Greybeard comes in nine sizes (6x11, 6x12, 7x13, 7x14, 8x15, 8x16, 9x17,
+9x18, 11x22). In all of the sizes there are regular and bold versions;
+for 8x15/16 and 9x17/18, there is also an italic.
+
+DIRECTORY STRUCTURE
+
+Getting started:
+
+  README            this file
+
+For installation:
+
+  INSTALL           installation guide for Greybeard
+  TARGETS.dat       determines sizes, styles, and encodings
+  VARIANTS.dat      determines preferred glyphs
+  configure         configuration script
+
+Documentation and legal texts:
+
+  CHANGELOG         changes w.r.t. previous versions
+  CHARSET           characters in Greybeard with internal and Unicode names
+  DESIGN            some thoughts on the design of Greybeard
+  FAQ               what you might want to know about Greybeard
+
+Internal stuff:
+
+  Makefile.in       template for Makefile
+  bdf/              bdf source files for Greybeard
+  mgl/              data source files for encoding conversion
+  genbdf/           generated bdf files
+  genpcf/           generated pcf.gz files
+  bin/              auxiliary programs
+  man/              manual pages for auxiliary programs
+  config-bak/       backup copies for TARGETS.dat and VARIANTS.dat
+

@@ -1,0 +1,189 @@
+#!/bin/sh
+
+SEDCMD=
+NL='
+'
+CR=`printf "\015"`
+UPPER=ABCDEFGHIJKLMNOPQRSTUVWXYZ
+LOWER=abcdefghijklmnopqrstuvwxyz
+ALPHA=$UPPER$LOWER
+ALNUM=0123456789_$UPPER$LOWER
+
+DEFPERL=perl
+DEFBDFTOPCF=bdftopcf
+GNUMAKE=make
+
+USAGE='Usage: ./configure --help
+       or ./configure [--Variable=Value]... [Variable=Value]...
+
+Variables (default values in brackets):
+
+For font installation:
+  prefix [/usr/local]
+  pcfdir [$prefix/share/fonts/X11/misc]
+
+If the bdfmangle utility should be installed as well:
+  bindir [$prefix/bin]
+  mandir [$prefix/man]
+
+If perl and/or bdftopcf are not on the current PATH, specify full path names:
+  perl [perl]
+  bdftopcf [bdftopcf]
+
+These should probably not be changed:
+  shell [/bin/sh]
+  bdfmangle [$perl bin/bdfmangle]
+  mkshallow [$perl bin/mkshallow]
+'
+
+for i ; do
+  VAR=
+  VALUE=
+
+  case $i in
+  --help|-help|--h|-h) cat <<EOT
+$USAGE
+EOT
+          exit 0 ;;
+  --*=*)  VAR=`expr match xx"$i" 'xx--\(['$ALPHA']['$ALNUM']*\)=.*' 2>/dev/null`
+          VALUE=`expr match xx"$i" 'xx--['$ALPHA']['$ALNUM']*=\(.*\)' 2>/dev/null` ;;
+  -*=*)   VAR=`expr match xx"$i" 'xx-\(['$ALPHA']['$ALNUM']*\)=.*' 2>/dev/null`
+          VALUE=`expr match xx"$i" 'xx-['$ALPHA']['$ALNUM']*=\(.*\)' 2>/dev/null` ;;
+  *=*)    VAR=`expr match xx"$i" 'xx\(['$ALPHA']['$ALNUM']*\)=.*' 2>/dev/null`
+          VALUE=`expr match xx"$i" 'xx['$ALPHA']['$ALNUM']*=\(.*\)' 2>/dev/null` ;;
+  *)      cat <<EOT
+configure: illegal argument $i
+
+$USAGE
+EOT
+          exit 1 ;;
+  esac
+
+  case $VAR in
+  '')     cat <<EOT
+configure: illegal variable name in $i
+
+$USAGE
+EOT
+          exit 1 ;;
+  esac
+
+  case $VALUE in
+  *$NL*)    cat <<EOT
+configure: newline is not permitted in assignment $i
+
+$USAGE
+EOT
+            exit 1 ;;
+  *$CR*)    cat <<EOT
+configure: character CR is not permitted in assignment $i
+
+$USAGE
+EOT
+            exit 1 ;;
+  *[\&\\]*) VALUE=`printf '%s' "$VALUE" | sed -e 's/\\([&\\\\]\\)/\\\\\\1/g'` ;;
+  esac
+
+  UCVAR=`echo "$VAR" | tr $LOWER $UPPER`
+  case $UCVAR in
+  PERL) DEFPERL=$VALUE ;;
+  BDFTOPCF) DEFBDFTOPCF=$VALUE ;;
+  esac
+
+  if grep "^$UCVAR *=" Makefile.in >/dev/null 2>/dev/null ; then
+    SEDCMD="$SEDCMD/^$UCVAR *=/s$CR=.*$CR= $VALUE$CR$NL"
+  else
+    cat <<EOT
+configure: no such variable: $i
+
+$USAGE
+EOT
+    exit 1
+  fi
+
+done
+
+if "$DEFPERL" -e 'print; exit 0;' </dev/null >/dev/null 2>/dev/null ; then
+  :
+else
+  cat <<'EOT'
+No perl found.
+You must install perl and/or change your $PATH to include perl and/or
+specify the path of perl using --perl=/path/to/perl before you can
+install Greybeard.
+
+Configuration stopped.
+EOT
+  exit 1
+fi
+
+if type make >/dev/null 2>/dev/null ||
+     type gmake >/dev/null 2>/dev/null ; then
+  :
+else
+  cat <<'EOT'
+No make found.
+You must install GNU make and/or change your $PATH to include GNU make
+before you can install Greybeard.
+
+Configuration stopped.
+EOT
+  exit 1
+fi
+
+if make --version >/dev/null 2>/dev/null &&
+     make --version | grep GNU >/dev/null 2>/dev/null ; then
+  :
+elif gmake --version >/dev/null 2>/dev/null &&
+       gmake --version | grep GNU >/dev/null 2>/dev/null ; then
+  GNUMAKE=gmake
+  cat <<EOT
+The "make" program installed on your computer is different from
+GNU make, however GNU make is available under the name "gmake". Use
+"gmake" instead of "make" to install Greybeard.
+
+EOT
+else
+  cat <<EOT
+The "make" program installed on your computer is different from
+GNU make; however the installation routine of Greybeard relies on
+features that are specific to GNU make. Probably your "make" program
+will not be sufficient; in this case, you must install GNU make first.
+
+EOT
+fi
+
+if "$DEFBDFTOPCF" <bdf/nb-16.bdf >/dev/null 2>/dev/null ; then
+  :
+else
+  cat <<'EOT'
+No bdftopcf found.
+You can create the generated bdf fonts for Greybeard using "make bdf";
+to generate and install the pcf fonts, however, you must first install
+bdftopcf and/or change your $PATH to include bdftopcf and/or specify
+the path of bdftopcf using --bdftopcf=/path/to/bdftopcf.
+
+EOT
+fi
+
+if sed -e "$SEDCMD" <Makefile.in >Makefile; then
+  cat <<EOT
+Configuration successful.
+
+You can still select which font sizes and styles should be generated
+by editing "TARGETS.dat" before running "$GNUMAKE"
+
+You can still select your preferred stylistic variants by editing
+"VARIANTS.dat" before running "$GNUMAKE"
+
+EOT
+  exit 0
+else
+  cat <<EOT
+Could not create Makefile.
+
+Configuration stopped.
+EOT
+  exit 1
+fi  
+

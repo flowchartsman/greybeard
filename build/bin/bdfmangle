@@ -1,0 +1,379 @@
+#!/usr/bin/perl
+
+# Copyright (C) 2012-2015 Uwe Waldmann
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+# IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+# CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+# TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+# SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+sub todecimal {
+  my $s = $_[0];
+  if ($s =~ /^-(0.*)/) {
+    -oct($1)
+  } elsif ($s =~ /^0/) {
+    oct($s)
+  } else {
+    $s
+  }
+}
+
+sub processmgl {
+  my ($filehandle, $filename) = @_;
+  
+  $filehandle++;
+  if ($filehandle eq 'fh32') {
+    die "bdfmangle: too many recursively included mangle files\nbdfmangle: stopped\n";
+  }
+  open($filehandle, $filename) || die "bdfmangle: cannot open manglefile \"$filename\"\nbdfmangle: stopped\n";
+
+  while (<$filehandle>) {
+    s/^\s+//;
+    while (/^(IF(UN)?DEF(ENC)?|IF(NOT)?FONT)\b/) {
+      if (s/^IFFONT\s+(\S+)\s+//) {
+        $substring = $1;
+        $preamble =~ m/\nFONT[ \t]([^\n]*)\n/;
+        $font = $1;
+        if (index($font,$substring) < 0) {
+          s/.*//;
+        }
+      } elsif (s/^IFNOTFONT\s+(\S+)\s+//) {
+        $substring = $1;
+        $preamble =~ m/\nFONT[ \t]([^\n]*)\n/;
+        $font = $1;
+        if (index($font,$substring) >= 0) {
+          s/.*//;
+        }
+      } elsif (s/^IFDEF\s+(\S+)\s+//) {
+        if (! defined $nameidx{$1}) {
+          s/.*//;
+        }
+      } elsif (s/^IFUNDEF\s+(\S+)\s+//) {
+        if (defined $nameidx{$1}) {
+          s/.*//;
+        }
+      } elsif (s/^IFDEFENC\s+($NUMBER)\s+//o) {
+        $enc = todecimal($1);
+        if (! defined $encidx{$enc}) {
+          s/.*//;
+        }
+      } elsif (s/^IFUNDEFENC\s+($NUMBER)\s+//o) {
+        $enc = todecimal($1);
+        if (defined $encidx{$enc}) {
+          s/.*//;
+        }
+      } else {
+        die "bdfmangle: illegal input in mangle file: ${_}bdfmangle: stopped\n";
+      }
+    }
+
+    if (/^FONT\s+(.*\S)\s*$/) {
+      $newfont = $1;
+      if ($newfont !~ /^-/) {
+	$newfont = "-$newfont";
+      }
+      $i = ($newfont =~ s/-/-/g);
+      $preamble =~ m/\nFONT[ \t]([^\n]*)\n/;
+      $font = $1;
+      $font =~ s/(-[^-]*){0,$i}$/$newfont/;
+      $preamble =~ s/\nFONT[ \t][^\n]*\n/\nFONT $font\n/;
+    } elsif (/^DEFAULT_CHAR\s+(.*\S)\s*$/) {
+      $newdchar = $1;
+      $newdchar = todecimal($newdchar);
+      $preamble =~ s/\nDEFAULT_CHAR[ \t][^\n]*\n/\nDEFAULT_CHAR $newdchar\n/;
+    } elsif (/^(CHARSET_REGISTRY\s+.*\S)\s*$/) {
+      $newreg = $1;
+      $preamble =~ s/\nCHARSET_REGISTRY[ \t][^\n]*\n/\n$newreg\n/;
+    } elsif (/^(CHARSET_ENCODING\s+.*\S)\s*$/) {
+      $newenc = $1;
+      $preamble =~ s/\nCHARSET_ENCODING[ \t][^\n]*\n/\n$newenc\n/;
+    } elsif (/^NODEFAULT\s*$/) {
+      $dfltstat = 0;
+    } elsif (/^DEFAULT\s+(\S+)\s*$/) {
+      $dfltstat = 1;
+      if (defined $nameidx{$1}) {
+        $dflt = $nameidx{$1};
+      } else {
+	warn "bdfmangle: no default glyph named \"$1\"\n";
+	$abort = 1;
+	$dflt = '';
+      }
+    } elsif (/^DEFAULTENC\s+($NUMBER)\s*$/o) {
+      $origenc = todecimal($1);
+      $dfltstat = 1;
+      if (defined $encidx{$origenc}) {
+        $dflt = $encidx{$origenc};
+      } else {
+	warn "bdfmangle: no default glyph with encoding $origenc\n";
+	$abort = 1;
+       $dflt = '';
+      }
+    } elsif (/^DEFAULTOMIT\s*$/) {
+      $dfltstat = 2;
+    } elsif (/^PUT\s+(\S+)\s+($NUMBER?)\s*$/o) {
+      $charname = $1;
+      $charenc = $2;
+      if ($charenc eq '') {
+	$charenc = $nextenc++;
+      } else {
+	$charenc = todecimal($charenc);
+	$nextenc = $charenc + 1;
+      }
+      if (defined $nameidx{$charname}) {
+	$mangle[$line++] = "DO $nameidx{$charname} $charname $charenc\n";
+	$cnt++;
+      } else {
+	if ($dfltstat == 0) {
+	  warn "bdfmangle: no glyph named \"$charname\"\n";
+	  $abort = 1;
+	} elsif ($dfltstat == 1) {
+	  $mangle[$line++] = "DO $dflt $charname $charenc\n";
+	  $cnt++;
+	}
+      }
+    } elsif (/^PUTENC\s+($NUMBER)\s+($NUMBER?)\s*$/o) {
+      $origenc = todecimal($1);
+      $charenc = $2;
+      if ($charenc eq '') {
+	$charenc = $nextenc++;
+      } else {
+	$charenc = todecimal($charenc);
+	$nextenc = $charenc + 1;
+      }
+      if (defined $encidx{$origenc}) {
+	$idx = $encidx{$origenc};
+	$mangle[$line++] = "DO $idx $idxname[$idx] $charenc\n";
+        $cnt++;
+      } else {
+        if ($dfltstat == 0) {
+	  warn "bdfmangle: no glyph with encoding $origenc\n";
+	  $abort = 1;
+        } elsif ($dfltstat == 1) {
+	  $mangle[$line++] = "DO $dflt $idxname[$dflt] $charenc\n";
+          $cnt++;
+	}
+      }
+    } elsif (/^PUTAS\s+(\S+)\s+(\S+)\s+($NUMBER?)\s*$/o) {
+      $charname = $1;
+      $newcharname = $2;
+      $charenc = $3;
+      if ($charenc eq '') {
+	$charenc = $nextenc++;
+      } else {
+	$charenc = todecimal($charenc);
+	$nextenc = $charenc + 1;
+      }
+      if (defined $nameidx{$charname}) {
+	$mangle[$line++] = "DO $nameidx{$charname} $newcharname $charenc\n";
+        $cnt++;
+      } else {
+        if ($dfltstat == 0) {
+	  warn "bdfmangle: no glyph named \"$charname\"\n";
+	  $abort = 1;
+        } elsif ($dfltstat == 1) {
+	  $mangle[$line++] = "DO $dflt $newcharname $charenc\n";
+          $cnt++;
+	}
+      }
+    } elsif (/^PUTENCAS\s+($NUMBER)\s+(\S+)\s+($NUMBER?)\s*$/o) {
+      $origenc = todecimal($1);
+      $newcharname = $2;
+      $charenc = $3;
+      if ($charenc eq '') {
+	$charenc = $nextenc++;
+      } else {
+	$charenc = todecimal($charenc);
+	$nextenc = $charenc + 1;
+      }
+      if (defined $encidx{$origenc}) {
+	$mangle[$line++] = "DO $encidx{$origenc} $newcharname $charenc\n";
+        $cnt++;
+      } else {
+        if ($dfltstat == 0) {
+	  warn "bdfmangle: no glyph with encoding $origenc\n";
+	  $abort = 1;
+        } elsif ($dfltstat == 1) {
+	  $mangle[$line++] = "DO $dflt $newcharname $charenc\n";
+          $cnt++;
+	}
+      }
+    } elsif (/^COPYTO\s+(\S+)\s+(\S+)\s+($NUMBER?)\s*$/) {
+      $charname = $1;
+      $newcharname = $2;
+      $newenc = $3;
+      if (defined $nameidx{$charname}) {
+	$idx = $nameidx{$charname};
+	$chars[$charidx] = $chars[$idx];
+	$nameidx{$newcharname} = $charidx;
+	if ($newenc ne '') {
+	  $newenc = todecimal($newenc);
+	  $encidx{$newenc} = $charidx;
+	}
+	$idxname[$charidx] = $newcharname;
+	$charidx++;
+      } else {
+	warn "bdfmangle: no glyph named \"$charname\"\n";
+	$abort = 1;
+      }
+    } elsif (/^COPYTOENC\s+(\S+)\s+($NUMBER)\s*$/o) {
+      $charname = $1;
+      $newenc = todecimal($2);
+      if (defined $nameidx{$charname}) {
+	$idx = $nameidx{$charname};
+	$chars[$charidx] = $chars[$idx];
+	$encidx{$newenc} = $charidx;
+	$idxname[$charidx] = $charname;
+	$charidx++;
+      } else {
+	warn "bdfmangle: no glyph named \"$charname\"\n";
+	$abort = 1;
+      }
+    } elsif (/^COPYENCTO\s+($NUMBER)\s+(\S+)\s+($NUMBER?)\s*$/o) {
+      $origenc = todecimal($1);
+      $newcharname = $2;
+      $newenc = $3;
+      if (defined $encidx{$origenc}) {
+	$idx = $encidx{$origenc};
+	$chars[$charidx] = $chars[$idx];
+	$nameidx{$newcharname} = $charidx;
+	if ($newenc ne '') {
+	  $newenc = todecimal($newenc);
+	  $encidx{$newenc} = $charidx;
+	}
+	$idxname[$charidx] = $newcharname;
+	$charidx++;
+      } else {
+	warn "bdfmangle: no glyph with encoding $origenc\n";
+	$abort = 1;
+      }
+    } elsif (/^COPYENCTOENC\s+($NUMBER)\s+($NUMBER)\s*$/o) {
+      $origenc = todecimal($1);
+      $newenc = todecimal($2);
+      if (defined $encidx{$origenc}) {
+	$idx = $encidx{$origenc};
+	$chars[$charidx] = $chars[$idx];
+	$encidx{$newenc} = $charidx;
+	$idxname[$charidx] = $idxname[$idx];
+	$charidx++;
+      } else {
+	warn "bdfmangle: no glyph with encoding $origenc\n";
+	$abort = 1;
+      }
+    } elsif (/^INCLUDE\s+(\S+)\s*$/o) {
+      processmgl($filehandle, $1);
+    } elsif (/^COMMENT(\s.*)?\n$/) {
+      $mangle[$line++] = $_;
+    } elsif (/^(\#|$)/) {
+      ;
+    } else {
+      die "bdfmangle: illegal input in mangle file: ${_}bdfmangle: stopped\n";
+    }
+  }
+
+  close($filehandle);
+}
+
+$NUMBER='(?:-?(?:0[0-7]*|0x[0-9a-fA-F]+|[1-9][0-9]*))';
+
+if ($#ARGV < 1) {
+  die "usage: bdfmangle bdffile manglefile\n"
+}
+
+$BDF = shift;
+
+open(BDF, $BDF) || die "bdfmangle: cannot open bdffile \"$BDF\"\nbdfmangle: stopped\n";
+
+$first = 1;
+$preamble = '';
+$chartext = '';
+$charidx = 0;
+while (<BDF>) {
+  if ($first && (/^STARTFONT\s/ .. /^CHARS\s/)) {
+    $preamble .= $_;
+    if (/^CHARS(\s.*)?$/) {
+      $first = 0;
+    }
+  } elsif (/^STARTCHAR\s/ .. /^ENDCHAR\s/) {
+    $chartext .= $_;
+    if (/^ENDCHAR(\s.*)?$/) {
+      $charname = '';
+      if ($chartext =~ s/^STARTCHAR(([ \t].*)?)\n//) {
+        $aux = $1;
+        if ($aux =~ /^[ \t]+(\S+)[ \t]*$/) {
+          $charname = $1;
+        } else {
+          warn "bdfmangle: invalid STARTCHAR line: STARTCHAR$aux\n";
+        }
+      }
+      $charenc = '';
+      if ($chartext =~ s/^ENCODING(([ \t].*)?)\n//m) {
+        $aux = $1;
+        if ($aux =~ /^[ \t]+(-?\d+)[ \t]*$/) { 
+          $charenc = 0 + $1;
+        } else {
+          warn "bdfmangle: invalid ENCODING line: ENCODING$aux\n";
+        }
+      }
+      $chars[$charidx] = $chartext;
+      $nameidx{$charname} = $charidx;
+      $encidx{$charenc} = $charidx;
+      $idxname[$charidx] = $charname;
+      $charidx++;
+      $chartext = '';
+    }
+  }
+}
+if ($first == 1) {
+  if ($preamble eq '') {
+    die "bdfmangle: no preamble found\nbdfmangle: stopped\n";
+  } else {
+    die "bdfmangle: preamble is incomplete\nbdfmangle: stopped\n";
+  }
+}
+if ($chartext ne '') {
+  warn "bdfmangle: last glyph is incomplete\n";
+}
+close(BDF);
+
+$line = 0;
+$cnt = 0;
+$abort = 0;
+$dflt = '';
+$dfltstat = 0; # handling missing glyphs: 0 = abort, 1 = insert dflt, 2 = omit
+$nextenc = 0;
+
+while ($MANGLE = shift) {
+  processmgl('fh00', $MANGLE);
+}
+
+die "bdfmangle: stopped\n" if $abort;
+$preamble =~ s/\nCHARS [^\n]*\n/\nCHARS $cnt\n/;
+print $preamble;
+
+for ($i = 0 ; $i < $line ; $i++) {
+  $_ = $mangle[$i];
+  if (/^DO (\d+) (\S+) (-?\d+)$/) {
+    print "STARTCHAR $2\nENCODING $3\n$chars[$1]";
+  } elsif (/^COMMENT\b/) {
+    print $_;
+  } else {
+    die "bdfmangle: fatal error, stopped";
+  }
+}
+
+print "ENDFONT\n";
+

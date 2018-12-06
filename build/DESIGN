@@ -1,0 +1,142 @@
+
+                               Greybeard:
+                A pixel-perfect bitmap programming font
+
+                          Based on UW ttyp0 by
+                              Uwe Waldmann
+
+Introduction
+
+Greybeard is a family of monospaced bitmap fonts. It covers most of the
+Latin and Cyrillic alphabet, Greek, Armenian, Georgian (only Mkhedruli),
+Hebrew (without cantillation marks), Thai, most of IPA (but no UPA),
+standard punctuation, common symbols, some mathematics, line graphics
+and a few dingbats.
+
+It is intended for old-fashioned nerds (like me) or those who prefer the
+ultimate in pixel-perfect crispness. As per its original design, it is
+designed to be a workhorse, not particularly fancy or cool. It contains
+a minimum of symbols and, as of this release, no ligagures.
+
+Sizes and Styles
+
+Greybeard comes in nine sizes (6x11, 6x12, 7x13, 7x14, 8x15, 8x16, 9x17,
+9x18, 11x22). In all of the sizes there are regular and bold versions;
+for 8x15/16 and 9x17/18, there is also an italic. (Due to the
+relationship between character height, character width, stroke width,
+and inter-character space, italics do not really fit for the other
+sizes.) For Hebrew, italics are replaced by semi-bold.
+
+The regular styles (up to 9x18) are sans-serifs with constant stroke
+width, with the obvious exception of some very narrow letters, such as
+I, J, i, j, where serifs are unavoidable in a monowidth font.
+
+The bold styles and the 11x22 regular have varying stroke width, and
+they are hybrid serifs (there are serifs on the horizontal strokes, but
+usually none on the vertical strokes). This is unorthodox, but a
+consequence of the low resolution bitmap: A constant stroke width of 2px
+would be much too dark for an 8x16 or 9x18 font, so alternating between
+1px strokes and 2px strokes is the only choice. But then the contrast
+between thin and thick strokes is so large that serifs on the thin
+(horizontal) lines become necessary for compensation. On the other hand,
+for most letters, there is not enough horizontal space to put decently
+looking serifs on the verticals. The form of the serifs (slab or wedge)
+is uniform within one size/style, but varies between different font
+sizes in order to create the right text color. For Hebrew, both
+horizontal and vertical lines are boldened - if only the horizontal
+lines were boldened, they would appear too light compared to the other
+scripts.
+
+There are some spots in the bold fonts where design deviatesfrom the
+conventional distribution of thick and thin strokes. Examples include
+the right leg of capital U, where a 1px stroke would have been too thin,
+and the crossbar of capital Eth, where a 1px stroke would not have been
+sufficiently visible. There are also thick strokes for the extenders of
+some lowercase Armenian letters, such as Gim, Da and Ra, in order to
+compensate for the fact that there was not enough space to make these
+strokes sufficiently long.
+
+
+Script-specific Issues
+
+Greybeard uses a relatively large x-height. For Latin and Cyrillic, this
+should improve legibility, and hopefully that's still acceptable for Greek.
+For Armenian and Georgian, the x-height is reduced a bit; it is still
+larger than it should be in a monoscript font, but in a multiscript
+font, reducing it even more would be problematic.
+
+The odd sizes (6x11, 7x13, 8x15, 9x17) of Greybeard are derived rather
+mechanically from the corresponding even ones (6x12, 7x14, 8x16, 9x18),
+usually by deleting the lowest pixel row. For the Latin, Cyrillic, Greek
+and (unpointed) Hebrew script, this means that the vertical space
+between two lines is reduced by one pixel, so it is rather unproblematic
+(except for languages with a very high frequency of accents). The
+Georgian and Armenian letters, however, have longer descenders, so in
+these alphabets there is an actual compression of the letter shapes.
+The results are not optimal. For pointed Hebrew, Georgian, Armenian, and
+of course Thai, the even-sized versions are strongly recommended.
+
+The Thai font is somewhat experimental - a 6x12 matrix is not really
+sufficient for Thai, and even the 9x18 and 11x22 versions would benefit
+from some additional vertical space. Moreover, Greybeard is built from is
+a bdf font and the bdf format does not provide means for proper positioning
+of floating accents, so Thai vowel signs and tone marks are implemented by
+naive overprinting. The results are obviously not optimal. The latter
+problem also affects the display of Hebrew vowel marks.
+
+
+Dubious Design Decisions
+
+- Poor man's kerning:
+  In some font sizes and styles, letters with high arms and without low
+  arms (e.g., F, Gamma) are moved to the right (compared to, say,
+  capital E). This is intentional.
+
+- Letter shapes:
+  Greybeard hews to standard letter shapes as much as possible, but there
+  are some exceptions. For instance, the crossbar of the small letter "f"
+  (that is usually on x-height) is slightly lowered. This makes the glyph
+  appear wider, so that it fits better into a monospaced font. Conversely,
+  some Georgian letters (Don, Las), that would otherwise be extremely
+  wide, have glyphs with a reduced number of bowls. These forms are rarely
+  used in print, but they are common both in handwriting and in typewriter
+  fonts.
+
+- Glyph collisions:
+  There are some cases where a glyph collides with the following one.
+  Most of these cases seem to be harmless, either because only one or
+  two pixels of a glyph touch the neighbouring one ("Th" in 6x12 bold
+  and 8x16 bold), or because the letter combination is rare ("sha sha"
+  in 7x14 regular). There is one exception, namely the sequence "mm" in
+  7x14 regular: the letter combination is frequent in some languages and
+  the glyphs touch each other along the full length of the stem. This still
+  seems pereferable to a compressed or asymmetric "m". (Unfortunately, in
+  Armenian, the frequency of wide letters (Ayb, Xeh, Peh, Tiwn, Piwr) is
+  so large that using compressed glyphs is unavoidable.)
+
+- Turned letters:
+  Some of the turned letters, such as turned "a" or "e", differ from the
+  non-turned versions. If the "e" of, say, 8x16 is turned, it would look
+  very similar to an "a" (and vice versa), so some disambiguation is
+  necessary.
+
+- Diacritic marks:
+  In certain font sizes and styles, the bitmap font designer has the
+  choice between making the caron unnaturally small, making the breve
+  unnaturally large, or displaying both in the same way. As there is
+  usually little risk of confusion between the two (orthographies using
+  both over the same letter are virtually non-existent), Greybeard uses
+  sometimes the same glyph for breve and caron. The same applies to
+  cedilla and undercomma.
+
+- Underline:
+  Nowadays the underline character is no longer used for underlining,
+  but for compound identifiers in programming languages and web
+  addresses. For these applications, an underline character on the base
+  line work better than an underline character below the base line.
+
+- ASCII non-alphanumerics:
+  Greybeard opts for a slashed zero and centered asterisk and tilde, as
+  well as right-angled angular brackets, versus more acute. It also opts
+  for straight backticks and single quotes. These can be changed during
+  installation by editing VARIANTS.dat at build time.

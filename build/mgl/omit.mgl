@@ -1,0 +1,4 @@
+# This file is used in combination with other mgl files to ensure that
+# the computation is not aborted if missing glyphs are encountered:
+# bdfmangle BDF_FILE omit.mgl OTHER_MGL_FILES
+DEFAULTOMIT
