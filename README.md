@@ -14,6 +14,6 @@ You can use the provided fonts, or read build/INSTALL for instructions on buildi
 
 # Update - 03-08-2022
 
-Until such time as a reasonable, automated workaround can be found for building a unified ttf with bitmap strikes is found, I've switched to [Bits'N'Picas](https://github.com/kreativekorp/bitsnpicas) for generating synthetic outlines. This appear to work well in MacOS testing. Unfortunately, this means that each size is now a separate family, but this at least has the side benefit of making it very clear what the intended rendering size is for the maximum crispness.
+Until such time as a reasonable, automated process for building a unified ttf with bitmap strikes is found, I've switched to [Bits'N'Picas](https://github.com/kreativekorp/bitsnpicas) for generating synthetic outlines. This appear to work well in MacOS testing. Unfortunately, this means that each size is now a separate family, but this at least has the side benefit of making it very clear what the intended rendering size is for the maximum crispness.
 
 Please file an issue for any problems with usage or rendering on other platforms.
