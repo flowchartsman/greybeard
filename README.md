@@ -1,6 +1,6 @@
 ![Greybeard](logo.png)
 
-Greybeard is a chunky monospaced bitmap programming font for all you pixel-perfect nerds who don't like eyestrain. It's based off of [UW ttyp0](http://people.mpi-inf.mpg.de/~uwe/misc/uw-ttyp0/).
+Greybeard is a chunky monospaced bitmap programming font for all you pixel-perfect nerds who don't like eyestrain. It's mostly a port of [UW ttyp0](http://people.mpi-inf.mpg.de/~uwe/misc/uw-ttyp0/) with a few tweaks.
 
 It covers most of the Latin and Cyrillic alphabet, Greek, Armenian, Georgian (only Mkhedruli), Hebrew (without cantillation marks), Thai, most of IPA (but no UPA), standard punctuation, common symbols, some mathematics, line graphics and a few dingbats (about 3000 Unicode characters).
 
@@ -31,6 +31,10 @@ You can use the provided fonts in the font-files/ttf directory.
 ![Greybeard 18px](screenshots/Greybeard-18px.png)
 
 ![Greybeard 22px](screenshots/Greybeard-22px.png)
+
+# Changes from UW ttyp0
+
+TBD
 
 # Update - 03-08-2022
 
