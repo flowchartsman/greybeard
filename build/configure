@@ -153,7 +153,7 @@ will not be sufficient; in this case, you must install GNU make first.
 EOT
 fi
 
-if "$DEFBDFTOPCF" <bdf/nb-16.bdf >/dev/null 2>/dev/null ; then
+if "$DEFBDFTOPCF" <bdf/gb-16.bdf >/dev/null 2>/dev/null ; then
   :
 else
   cat <<'EOT'
