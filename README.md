@@ -8,13 +8,14 @@ It is provided as rendered outline fonts in the following pixel sizes: 11, 12, 1
 
 It is named after those mythical sysops, staring at white on blue Borland compilers late into the night. Some say they stare still...
 
+# Samples
+
+![Greybeard Samples](greybeard_sample.gif)
+
 # Installation
 
 You can use the provided fonts in the `dist/` directory.
 
-# Samples
-
-![Greybeard Samples](greybeard_sample.gif)
 
 # Changes from UW ttyp0
 
