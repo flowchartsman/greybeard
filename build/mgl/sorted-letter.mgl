@@ -1,4 +1,4 @@
-# Proprietary encoding for UW ttyp0 (accented letters sorted by base letter).
+# Proprietary encoding originally for UW ttyp0 (accented letters sorted by base letter).
 PUT LtCapA
 PUT LtCapALdot
 PUT LtCapALring
