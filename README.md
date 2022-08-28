@@ -1,4 +1,4 @@
-![Greybeard](logo.png)
+![Greybeard](logo.gif)
 
 Greybeard is a chunky monospaced bitmap programming font for all you pixel-perfect nerds who don't like eyestrain. It's mostly a port of [UW ttyp0](http://people.mpi-inf.mpg.de/~uwe/misc/uw-ttyp0/) with a few tweaks.
 
