@@ -54,7 +54,7 @@ $(patsubst %,$(WOFF2_files), $(FONTS)): %.woff2: %.ttf | outdir
 
 woff2s:$(patsubst %,$(WOFF2_files), $(FONTS))
 
-release: clean woff2s package screenshots
+release: distclean woff2s sample package clean
 
 outdir:
 	mkdir -p font_out
@@ -69,12 +69,18 @@ package:
 	cp font_out/*.ttf dist/ttf
 	cp font_out/*.woff2 dist/woff2
 
-.PHONY: screenshots
-screenshots :
-	./buildshots.sh
+.PHONY: sample | outdir
+sample : ttfs
+	perl buildsample.pl
+	cp font_out/greybeard_sample.gif .
 
 .PHONY: clean
 clean:
+	rm -rf build/genbdf/*
+	rm -rf font_out
+
+.PHONY: distclean
+distclean:
 	rm -rf build/genbdf/*
 	rm -rf font_out
 	rm -rf dist

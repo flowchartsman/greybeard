@@ -10,28 +10,11 @@ It is named after those mythical sysops, staring at white on blue Borland compil
 
 # Installation
 
-You can use the provided fonts in the font-files/ttf directory.
+You can use the provided fonts in the `dist/` directory.
 
-# Screenshots
+# Samples
 
-![Greybeard 11px](screenshots/Greybeard-11px.png)
-
-![Greybeard 12px](screenshots/Greybeard-12px.png)
-
-![Greybeard 13px](screenshots/Greybeard-13px.png)
-
-![Greybeard 14px](screenshots/Greybeard-14px.png)
-
-![Greybeard 15px](screenshots/Greybeard-15px.png)
-
-![Greybeard 16px](screenshots/Greybeard-16px.png)
-
-![Greybeard 17px](screenshots/Greybeard-17px.png)
-
-![Greybeard 18px](screenshots/Greybeard-18px.png)
-
-![Greybeard 22px](screenshots/Greybeard-22px.png)
-
+![Greybeard Samples](greybeard_sample.gif)
 # Changes from UW ttyp0
 
 TBD
