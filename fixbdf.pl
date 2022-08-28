@@ -1,6 +1,5 @@
 use strict;
 use warnings;
-use feature "switch";
 
 my $file = shift;
 $file =~ /^.*gb-(\d+)([^-]*).*\.bdf$/;
