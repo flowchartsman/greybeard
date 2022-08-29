@@ -29,6 +29,6 @@ You can use the provided fonts in the `dist/` directory.
 
 The files in `/build` are more or less the same layout as UW ttyp0, and are used to build the intermediate .bdf files with variants applied from the templates which serve as the source of truth for the font.
 
-Manual instructions in `build/INSTALL` are geared towards installing a .pcf font and are probably not useful to anyone these days, but you can probably figure it out if that's what you want. Alternatively, you can file an issue and I can resurrect the .pcf generation as part of release.
+Manual instructions in `build/INSTALL` are geared towards installing a .pcf font and are probably not useful to anyone these days, but you can probably figure it out if that's what you need. .pcf files are generated as part of the build now, and also reside in `/dist`
 
 Most testing is done on MacOS, so there aren't a lot of eyes on Windows and Linux. Please file an issue if you have problems with usage and/or rendering on any platform.
