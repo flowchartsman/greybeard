@@ -33,14 +33,14 @@ foreach(sort(keys %$fonts)) {
     my $title_file = "$dirname/${basename}_title.gif";
     push @stack, $title_file;
     # generate title
-    `magick -font $dirname/Greybeard-22px-Bold.ttf -pointsize 22 -background black -fill '#E69C00' label:$basename $title_file`;
-    `magick $title_file -background black -extent 0x\%[fx:h+22] $title_file`;
+    `magick -font $dirname/Greybeard-22px-Bold.ttf -pointsize 22 -background white -fill black label:$basename $title_file`;
+    `magick $title_file -background white -extent 0x\%[fx:h+22] $title_file`;
     # generate samples
     foreach my $weight ("Medium", "Italic", "Bold", "BoldItalic") {
         if (exists $font->{$weight}) {
             my $sample_file = "$dirname/${basename}-${weight}_sample.gif";
             push @stack, $sample_file;
-            `magick -font $font->{$weight} -pointsize $font->{size} -background black -fill '#E69C00' label:\@sampletext.txt $sample_file`;
+            `magick -font $font->{$weight} -pointsize $font->{size} -background white -fill black label:\@sampletext.txt $sample_file`;
         }
     }
 
@@ -52,6 +52,6 @@ foreach(sort(keys %$fonts)) {
 
 #generate the final montage
 my $montage_file = "$dirname/greybeard_sample.gif";
-`montage @montage -background black -gravity north -tile 5x -geometry +5+10 $montage_file`;
-`convert $montage_file -bordercolor black -border 1x1 -trim +repage $montage_file`;
-`convert -bordercolor black -border 10 $montage_file $montage_file`;
+`montage @montage -background white -gravity north -tile 5x -geometry +5+10 $montage_file`;
+`convert $montage_file -bordercolor white -border 1x1 -trim +repage $montage_file`;
+`convert -bordercolor white -border 10 $montage_file $montage_file`;
