@@ -3,6 +3,7 @@ FONTS=Greybeard-11px Greybeard-11px-Bold Greybeard-12px Greybeard-12px-Bold Grey
 BDF_files=build/genbdf/%.bdf
 BI_files=build/genbdf/bi/%.bdf
 TTF_files=font_out/%.ttf
+PCF_files=font_out/%.pcf
 WOFF2_files=font_out/%.woff2
 
 $(BDF_files): | bdfdir
@@ -17,6 +18,37 @@ $(BI_files): | bdfdir
 	mkdir -p build/genbdf/bi
 	mkbold -r -L $< > $@
 	perl fixbdf.pl $@
+
+font_out/Greybeard-11px.pcf: build/genbdf/gb-11-uni.bdf
+font_out/Greybeard-11px-Bold.pcf: build/genbdf/gb-11b-uni.bdf
+font_out/Greybeard-12px.pcf: build/genbdf/gb-12-uni.bdf
+font_out/Greybeard-12px-Bold.pcf: build/genbdf/gb-12b-uni.bdf
+font_out/Greybeard-13px.pcf: build/genbdf/gb-13-uni.bdf
+font_out/Greybeard-13px-Bold.pcf: build/genbdf/gb-13b-uni.bdf
+font_out/Greybeard-14px.pcf: build/genbdf/gb-14-uni.bdf
+font_out/Greybeard-14px-Bold.pcf: build/genbdf/gb-14b-uni.bdf
+font_out/Greybeard-15px.pcf: build/genbdf/gb-15-uni.bdf
+font_out/Greybeard-15px-Bold.pcf: build/genbdf/gb-15b-uni.bdf
+font_out/Greybeard-15px-Italic.pcf: build/genbdf/gb-15i-uni.bdf
+font_out/Greybeard-16px.pcf: build/genbdf/gb-16-uni.bdf
+font_out/Greybeard-16px-Bold.pcf: build/genbdf/gb-16b-uni.bdf
+font_out/Greybeard-16px-Italic.pcf: build/genbdf/gb-16i-uni.bdf
+font_out/Greybeard-17px.pcf: build/genbdf/gb-17-uni.bdf
+font_out/Greybeard-17px-Bold.pcf: build/genbdf/gb-17b-uni.bdf
+font_out/Greybeard-17px-Italic.pcf: build/genbdf/gb-17i-uni.bdf
+font_out/Greybeard-18px.pcf: build/genbdf/gb-18-uni.bdf
+font_out/Greybeard-18px-Bold.pcf: build/genbdf/gb-18b-uni.bdf
+font_out/Greybeard-18px-Italic.pcf: build/genbdf/gb-18i-uni.bdf
+font_out/Greybeard-22px.pcf: build/genbdf/gb-22-uni.bdf
+font_out/Greybeard-22px-Bold.pcf: build/genbdf/gb-22b-uni.bdf
+font_out/Greybeard-15px-BoldItalic.pcf: build/genbdf/bi/gb-15bi.bdf
+font_out/Greybeard-16px-BoldItalic.pcf: build/genbdf/bi/gb-16bi.bdf
+font_out/Greybeard-17px-BoldItalic.pcf: build/genbdf/bi/gb-17bi.bdf
+font_out/Greybeard-18px-BoldItalic.pcf: build/genbdf/bi/gb-18bi.bdf
+$(PCF_files): | outdir
+	bdftopcf $< > $@
+
+pcfs:$(patsubst %,$(PCF_files), $(FONTS))
 
 font_out/Greybeard-11px.ttf: build/genbdf/gb-11-uni.bdf
 font_out/Greybeard-11px-Bold.ttf: build/genbdf/gb-11b-uni.bdf
@@ -54,7 +86,7 @@ $(patsubst %,$(WOFF2_files), $(FONTS)): %.woff2: %.ttf | outdir
 
 woff2s:$(patsubst %,$(WOFF2_files), $(FONTS))
 
-release: distclean woff2s sample package clean
+release: distclean woff2s pcfs sample package clean
 
 outdir:
 	mkdir -p font_out
@@ -66,8 +98,10 @@ bdfdir:
 package:
 	mkdir -p dist/ttf
 	mkdir -p dist/woff2
+	mkdir -p dist/pcf
 	cp font_out/*.ttf dist/ttf
 	cp font_out/*.woff2 dist/woff2
+	cp font_out/*.pcf dist/pcf
 
 .PHONY: sample | outdir
 sample : ttfs
@@ -82,5 +116,6 @@ clean:
 .PHONY: distclean
 distclean:
 	rm -rf build/genbdf/*
+	rm -rf build/genpcf/*
 	rm -rf font_out
 	rm -rf dist
