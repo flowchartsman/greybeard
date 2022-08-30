@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     container: flowchartsman/bitmap-font-vector-build:latest
     steps:
-      - name "Checkout"
+      - name: "Checkout"
         uses: actions/checkout@v2
       - name: "Build Font Files"
         run: make release
