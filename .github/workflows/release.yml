@@ -3,7 +3,7 @@ name: "tagged-release"
 on:
   push:
     branches:
-      - 'main'
+      - 'master'
     tags:
       - 'v*'
 jobs:
