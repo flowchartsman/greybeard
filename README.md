@@ -14,8 +14,7 @@ It is named after those mythical sysops, staring at white on blue Borland compil
 
 # Installation
 
-You can use the provided fonts in the `dist/` directory.
-
+Font files can be downloaded from the [releases page](https://github.com/flowchartsman/greybeard/releases)
 
 # Changes from UW ttyp0
 
