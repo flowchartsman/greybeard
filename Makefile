@@ -8,7 +8,7 @@ WOFF2_files=font_out/%.woff2
 
 $(BDF_files): | bdfdir
 	make -C build $(patsubst build/%,%,$@)
-	perl fixbdf.pl $@
+	perl script/fixbdf.pl $@
 
 build/genbdf/bi/gb-15bi.bdf: build/genbdf/gb-15i-uni.bdf
 build/genbdf/bi/gb-16bi.bdf: build/genbdf/gb-16i-uni.bdf
@@ -17,7 +17,7 @@ build/genbdf/bi/gb-18bi.bdf: build/genbdf/gb-18i-uni.bdf
 $(BI_files): | bdfdir
 	mkdir -p build/genbdf/bi
 	mkbold -r -L $< > $@
-	perl fixbdf.pl $@
+	perl script/fixbdf.pl $@
 
 font_out/Greybeard-11px.pcf: build/genbdf/gb-11-uni.bdf
 font_out/Greybeard-11px-Bold.pcf: build/genbdf/gb-11b-uni.bdf
@@ -86,7 +86,7 @@ $(patsubst %,$(WOFF2_files), $(FONTS)): %.woff2: %.ttf | outdir
 
 woff2s:$(patsubst %,$(WOFF2_files), $(FONTS))
 
-release: distclean woff2s pcfs sample package clean
+release: distclean woff2s pcfs sample package
 
 outdir:
 	mkdir -p font_out
@@ -94,19 +94,17 @@ outdir:
 bdfdir:
 	mkdir -p build/genbdf/bi
 
+VERSION := $(shell git describe --exact-match --tags 2> /dev/null || git rev-parse --short HEAD 2>&1|tr -d '\n')
 .PHONY: package
 package:
-	mkdir -p dist/ttf
-	mkdir -p dist/woff2
-	mkdir -p dist/pcf
-	cp font_out/*.ttf dist/ttf
-	cp font_out/*.woff2 dist/woff2
-	cp font_out/*.pcf dist/pcf
+	mkdir -p dist
+	zip -j dist/Greybeard-$(VERSION)-ttf font_out/*.ttf
+	zip -j dist/Greybeard-$(VERSION)-woff2 font_out/*.woff2
+	zip -j dist/Greybeard-$(VERSION)-pcf font_out/*.pcf
 
 .PHONY: sample | outdir
 sample : ttfs
-	perl buildsample.pl
-	cp font_out/greybeard_sample.gif .
+	perl script/buildsample.pl font_out greybeard_sample.gif
 
 .PHONY: clean
 clean:

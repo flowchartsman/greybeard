@@ -2,7 +2,9 @@ use strict;
 use warnings;
 use 5.010;
 
-my $dirname = 'font_out';
+my $dirname = shift;
+my $output_file = shift;
+
 opendir(DIR, $dirname) or die "Could not open $dirname\n";
 
 my $fonts = {};
@@ -51,7 +53,6 @@ foreach(sort(keys %$fonts)) {
 }
 
 #generate the final montage
-my $montage_file = "$dirname/greybeard_sample.gif";
-`montage @montage -background white -gravity north -tile 5x -geometry +5+10 $montage_file`;
-`convert $montage_file -bordercolor white -border 1x1 -trim +repage $montage_file`;
-`convert -bordercolor white -border 10 $montage_file $montage_file`;
+`montage @montage -background white -gravity north -tile 5x -geometry +5+10 $output_file`;
+`convert $output_file -bordercolor white -border 1x1 -trim +repage $output_file`;
+`convert -bordercolor white -border 10 $output_file $output_file`;
