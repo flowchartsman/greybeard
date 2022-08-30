@@ -20,12 +20,24 @@ jobs:
         run: echo "relname=$(git describe --exact-match --tags 2> /dev/null || git rev-parse --short HEAD|tr -d '\n')" >> $GITHUB_ENV
       - name: "Build Font Files"
         run: make release
-      # Auto update screenshot here
       - name: "Cut Release Files"
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          title: ${{ env.relname }}
+          title: Greybeard ${{ env.relname }}
           prerelease: false
           files: |
             dist/*
+      - name: Check For Sample Update
+        uses: tj-actions/verify-changed-files@v11.1
+        id: check-sample-changed
+        with:
+          files: |
+             greybeard_sample.gif
+      - name: Auto Checkin Sample
+        if: steps.check-sample-changed.outputs.files_changed == 'true'
+        run: |
+          git add greybeard_sample.gif
+          git commit -m "Auto-update sample for ${{ env.relname }}"
+          git fetch origin master
+          git push origin HEAD:master
