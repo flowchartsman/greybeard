@@ -26,8 +26,22 @@ Font files can be downloaded from the [releases page](https://github.com/flowcha
 - Bold-Italic variants.
 - Additional height properties to help .ttf generation.
 
-The files in `/build` are more or less the same layout as UW ttyp0, and are used to build the intermediate .bdf files with variants applied from the templates which serve as the source of truth for the font.
+# Building
 
-Manual instructions in `build/INSTALL` are geared towards installing a .pcf font and are probably not useful to anyone these days, but you can probably figure it out if that's what you need. .pcf files are generated as part of the build now, and also reside in `/dist`
+If you want to build the font yourself for testing or if you want to select stylistic variants, you can use the dockerized build process which uses the [bitmap-font-vector-build](https://hub.docker.com/r/flowchartsman/bitmap-font-vector-build) container I created to collect all of the necessary tools in one place. Just make whatever changes you like and run `./scripts/docker_build.sh`, which will generate .ttf files in `font_out`. You can also specify any make target you like with this script. The ones that probably interest you are:
 
+- `ttfs`
+- `woff2s`
+- `pcfs`
+
+Note: the `woff2s` target will also generate the .ttf files, since it creates the .woff2 files from them.
+
+Mostly you will probably only want to modify `build/VARIANTS.dat` and rebuild the font.
+
+# Repo Layout
+The tree under `/build` is more or less the same layout as UW ttyp0, and is used to build the intermediate .bdf files which then generate both the .ttf and .pcf files. The intermediat .bdf files are in turn created by applying the settings in `build/VARIANTS.dat` to the files in `build/bdf`, which serve as the source of truth for the font.
+
+Manual instructions in `build/INSTALL` are kept around for legacy purposes and are geared towards generating and installing a gzipped pcf font, so they are probably not useful to anyone these days. If you're installing the font in an environment that supports it, you probably know what you're doing.
+
+# Reporting Issues
 Most testing is done on MacOS, so there aren't a lot of eyes on Windows and Linux. Please file an issue if you have problems with usage and/or rendering on any platform.
