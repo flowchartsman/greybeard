@@ -52,7 +52,7 @@ Note: the `woff2s` target will also generate the .ttf files, since it creates th
 Mostly you will probably only want to modify `build/VARIANTS.dat` and rebuild the font.
 
 # Repo Layout
-The tree under `/build` is more or less the same layout as UW ttyp0, and is used to build the intermediate .bdf files which then generate both the .ttf and .pcf files. The intermediat .bdf files are in turn created by applying the settings in `build/VARIANTS.dat` to the files in `build/bdf`, which serve as the source of truth for the font.
+The tree under `/build` is more or less the same layout as the original repo, and is used to build the intermediate .bdf files which then generate both the .ttf and .pcf files. The intermediat .bdf files are in turn created by applying the settings in `build/VARIANTS.dat` to the files in `build/bdf`, which serve as the source of truth for the font.
 
 Manual instructions in `build/INSTALL` are kept around for legacy purposes and are geared towards generating and installing a gzipped pcf font, so they are probably not useful to anyone these days. If you're installing the font in an environment that supports it, you probably know what you're doing.
 
