@@ -98,9 +98,9 @@ VERSION := $(shell git describe --exact-match --tags 2> /dev/null || git rev-par
 .PHONY: package
 package:
 	mkdir -p dist
-	zip -j dist/Greybeard-$(VERSION)-ttf font_out/*.ttf
-	zip -j dist/Greybeard-$(VERSION)-woff2 font_out/*.woff2
-	zip -j dist/Greybeard-$(VERSION)-pcf font_out/*.pcf
+	zip -j dist/Greybeard-$(VERSION)-ttf.zip font_out/*.ttf
+	zip -j dist/Greybeard-$(VERSION)-woff2.zip font_out/*.woff2
+	zip -j dist/Greybeard-$(VERSION)-pcf.zip font_out/*.pcf
 
 .PHONY: sample | outdir
 sample : ttfs
