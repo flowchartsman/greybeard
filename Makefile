@@ -109,7 +109,7 @@ sample : ttfs
 .PHONY: clean
 clean:
 	rm -rf build/genbdf/*
-	rm -rf font_out
+	rm -rf build/genpcf/*
 
 .PHONY: distclean
 distclean:
