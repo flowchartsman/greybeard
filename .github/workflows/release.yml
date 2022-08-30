@@ -14,10 +14,15 @@ jobs:
     steps:
       - name: "Checkout"
         uses: actions/checkout@v2
+      - name: Set ownership
+        run: |
+          # this is to fix GIT not liking owner of the checkout dir
+          chown -R $(id -u):$(id -g) $PWD
       - name: "Set Version"
         run: echo "relname=$(git describe --exact-match --tags 2> /dev/null || git rev-parse --short HEAD|tr -d '\n')" >> $GITHUB_ENV
       - name: "Build Font Files"
         run: make release
+      # Auto update screenshot here
       - name: "Cut Release Files"
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
