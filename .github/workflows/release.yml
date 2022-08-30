@@ -12,11 +12,13 @@ jobs:
     runs-on: ubuntu-latest
     container: flowchartsman/bitmap-font-vector-build:latest
     steps:
+      - name "Checkout"
+        uses: actions/checkout@v2
       - name: "Build Font Files"
-      - uses: actions/checkout@v2
-      - run: make release
-      - run: echo "relname=$(git describe --exact-match --tags 2> /dev/null || git rev-parse --short HEAD|tr -d '\n')" >> $GITHUB_ENV
-      - uses: "marvinpinto/action-automatic-releases@latest"
+        run: make release
+        run: echo "relname=$(git describe --exact-match --tags 2> /dev/null || git rev-parse --short HEAD|tr -d '\n')" >> $GITHUB_ENV
+      - name: "Cut Release Files"
+        uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           title: ${{ env.relname }}
