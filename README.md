@@ -1,6 +1,6 @@
 ![Greybeard](logo.gif)
 
-Greybeard is a chunky monospaced bitmap programming font for all you pixel-perfect nerds who don't like eyestrain. It's mostly a port of [UW ttyp0](http://people.mpi-inf.mpg.de/~uwe/misc/uw-ttyp0/) with a few tweaks.
+Greybeard is a chunky monospaced bitmap programming font for all you pixel-perfect nerds who don't like eyestrain. It's mostly a vector port of [UW ttyp0](http://people.mpi-inf.mpg.de/~uwe/misc/uw-ttyp0/) with a few tweaks.
 
 It covers most of the Latin and Cyrillic alphabet, Greek, Armenian, Georgian (only Mkhedruli), Hebrew (without cantillation marks), Thai, most of IPA (but no UPA), standard punctuation, common symbols, some mathematics, line graphics and a few dingbats (about 3000 Unicode characters).
 
@@ -16,12 +16,25 @@ It is named after those mythical sysops, staring at white on blue Borland compil
 
 Font files can be downloaded from the [releases page](https://github.com/flowchartsman/greybeard/releases)
 
-# Changes from UW ttyp0
+# Usage
 
+Greybeard is split into multiple separate fonts named with the point size they are intended to be rendered at for pixel-perfect display. To use it, install the variant you like, and then set the font size of your editor or terminal to match. For example, if you like the 18px size, install `Greybeard-18px*.ttf` and set the size to `18pt` in your application. Because of the way the outlines are generated, multiples should work as well.
+
+For code editors you may need to set an explicit line height as well, to keep the spacing sane. For example, setting the line height to around `1` in VSCode seems to work well.
+
+The reason the font is split up into different sizes is because Windows [kind of a jerk](http://www.electronicdissonance.com/2010/01/raster-fonts-in-visual-studio-2010.html) about bitmap fonts. In theory, .ttf *does* support embedding bitmap versions of various point sizes (a feature called bitmap strikes), but Windows has decided to ignore this except in [very specific, fiddly cases](https://int10h.org/blog/2016/01/windows-cleartype-truetype-fonts-embedded-bitmaps/)), which have the side effect of making the font useless in the terminal. This is unacceptable for this font, so here we are. If you know of way around this limitation, please comment in the [ongoing issue](https://github.com/flowchartsman/greybeard/issues/9) and maybe send a PR my way.
+
+
+# Relation to UW ttyp0
+
+Most of the word towards Greybeard has been in assembling a toolkit to convert the original bitmap font, [UW ttyp0](https://people.mpi-inf.mpg.de/~uwe/misc/uw-ttyp0/), to a modern outline format and trying to make sure it renders crisply. The actual glyphs are still almost entirely the work of Uwe Waldmann, the original creator of UW ttyp0. There have been a few tweaks, and will likely be a few more as the project progresses, but we wouldn't have such a comprehensive bitmap font without all of Uwe's hard work. The reason it has a different name is pretty simple: the MIT Licence that UW ttyp0 uses stipulates an additional clause that any changes that add or alter glyphs should cause the font to be renamed in such a way to dissasociate it from the original author. This makes sense, since no one wants to get spammed with support requests or complaints for something they didn't write. By giving it a completely different name, I hope to avoid this. Also "Greybeard" is a fun name. So, yeah. Any issues should target this project.
+
+The following is a brief list of differences from UW ttyp0:
+
+- Render nbsp as normal space to avoid rendering glyphs in editor whitespace.
 - Default to straight apostrophe/graves.
 - Default to slashed zero.
 - Default to centered tilde.
-- Render nbsp as normal space to avoid editor issues.
 - Fixed `#` glyph for certain sizes/weights to make it less "pointy".
 - Bold-Italic variants.
 - Additional height properties to help .ttf generation.
